@@ -1,0 +1,5 @@
+{
+	"id": "UUID",
+	"caller": "+381 21 123456",
+	"location": "s3://hack9-red-team/reports/${UUID}"
+}

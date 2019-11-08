@@ -1,0 +1,362 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: Reference implementation
+  license:
+    name: MIT
+servers:
+  - url: https://hack9.levi9.com/reference
+paths:
+  /initialize:
+    post:
+      summary: "Initialize the system"
+      description: "Accept configuration and initialize the service"
+      operationId: init
+      responses:
+        201:
+          description: "Configuration was successfully parsed and the server is ready."
+          headers:
+            Location:
+              description: URL of the server
+              schema:
+                type: string
+              
+  /switchboard/price:
+    get:
+      summary: "Get call price"
+      description: "Get (potential call price for the given called number, per minute. This will not initiate a call."
+      operationId: getPrice
+      tags:
+        - call
+      parameters:
+        - name: number
+          in: query
+          required: true
+          schema:
+            type: string
+          description: "Called number, for which the call price should be calculated."   
+      responses:
+        200:
+          description: "Price of a call, per second"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Price"
+        404:
+          description: "Price for the number cannot be calculated."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        400:
+          description: "Call number is invalid format"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+ 
+  /switchboard/call:
+    post:
+      summary: "Register a call"
+      description: "Register details of a call that was made."
+      operationId: registerCall
+      tags:
+        - call
+      requestBody:
+        description: "One call to register."
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Call"
+        required: true
+      responses:
+        204:
+          description: "Call accepted"
+        400:
+          description: "Incorrect input"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        default:
+          description: "Error occurred"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              
+  /financial/invoice:
+    post:
+      summary: "Generate invoice"
+      description: "Initiate invoice generation. This can be sync or async call. Will return URL of the invoice."
+      operationId: createInvoice
+      tags:
+        - financial
+      requestBody:
+        description: "Invloice request"
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceRequest"
+        required: true
+      responses:
+        201:
+          description: "Invoice is created."
+          headers:
+            Location:
+              description: "URL where invoice can be retrieved."
+              schema:
+                type: string
+                format: url
+        202:
+          description: "Invoice is created."
+          headers:
+            Location:
+              description: "URL where invoice can be retrieved."
+              schema:
+                type: string
+                format: url
+        400:
+          description: "Bad parameters"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+              
+  /financial/invoice/{id}:
+    get:
+      summary: "Get the invoice"
+      description: "Get the invoice with the given ID"
+      operationId: getInvoice
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: "Invoice ID"
+          schema:
+            type: string
+      tags:
+        - financial
+      responses:
+        200:
+          description: "Invoice with the given ID"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+      
+  /report:
+    post:
+      summary: "Request report creation"
+      description: "Request asynchronous report creation."
+      operationId: createReport
+      tags:
+        - financial
+      requestBody:
+        description: "Report request body"
+        content:
+          appliucation/json:
+            schema:
+              $ref: '#/components/schemas/ReportRequest'
+        required: true
+      responses:
+        201:
+          description: "Report has been created"
+          headers:
+            Location:
+              description: "URL for the report"
+              schema:
+                type: string
+                format: url
+        202:
+          description: "Report request is under processing"
+          headers:
+            Location:
+              description: "URL of the report"
+              schema:
+                type: string
+                format: url
+            
+  /report/{id}:
+    get:
+      summary: "Get report status and location"
+      description: "Get report status and location"
+      operationId: getReport
+      tags:
+        - financial
+      parameters:
+        - name: id
+          schema:
+            type: string
+          required: true
+          in: path
+          description: "Report ID"
+      responses:
+        200:
+          description: "Report status"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Report"
+        404:
+          description: "Unknown report"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: "Error message"
+    Price:
+      type: object
+      properties:
+        prefix:
+          type: string
+          description: "Telephone number prefix this price is for. for instance '+381 21'"
+        price:
+          type: number
+          format: float
+          description: "Price of a phone call, per minute."
+        from:
+          type: string
+          format: date-time
+          description: "Time this price is valid from."
+        to:
+          type: string
+          format: date-time
+          description: "Time this price is valid to."
+      required:
+        - prefix
+        - price
+        - from
+        - to
+    Config:
+      type: array
+      items:
+        $ref: "#/components/schemas/Price"
+    Call:
+      type: object
+      properties:
+        caller:
+          type: string
+          format: telephone
+          description: "Caller number"
+        number:
+          type: string
+          description: "Number being called."
+        start:
+          type: string
+          format: date-time
+          description: "Start time of the call"
+        duration:
+          type: integer
+          format: int32
+          description: "Call duration, in seconds"
+        geo_x:
+          type: number
+          format: float
+          description: "X coordinate of the caller"
+        geo_y:
+          type: number
+          format: float
+          description: "Y coordinate of the caller"
+      required:
+        - caller
+        - number
+        - start
+        - duration
+    InvoiceRequest:
+      type: object
+      properties:
+        number:
+          type: string
+          format: telephone
+          description: "Telephone number to create invoice for."
+        start:
+          type: string
+          format: date-time
+          description: "Start of the invoicing period."
+        end:
+          type: string
+          format: date-time
+          description: "End of the invoicing period"
+      required:
+        - number
+        - start
+        - end
+    Invoice:
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Invoice ID, has to be unique."
+        number:
+          type: string
+          format: telephone
+          description: "Telephone number for which the invoice is created"
+        start:
+          type: string
+          format: date-time
+          description: "Start period of the invoice."
+        end:
+          type: string
+          format: date-time
+          description: "End period of the invoice."
+        sum:
+          type: number
+          format: float
+          description: "Amount to be payed for the invoice"
+        calls_made:
+          type: integer
+          format: int32
+          description: "Number of calls made during the invoicing period."
+      required:
+        - id
+        - number
+        - start
+        - end
+        - sum
+        - calls_made
+    ReportRequest:
+      type: object
+      properties:
+        report_type:
+          type: integer
+          format: int32
+        start:
+          type: string
+          format: date-time
+          description: "Start period of the report"
+        end:
+          type: string
+          format: date-time
+          description: "End period of the report"
+        numbers:
+          type: array
+          items:
+            type: string
+            format: telephone
+      required:
+        - report_type
+        - start
+        - end
+        - numbers
+    Report:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          description: "ID of the report"
+        status:
+          type: string
+          enum: [processing, done]
+        location:
+          type: string
+          format: url

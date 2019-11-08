@@ -1,0 +1,17 @@
+{
+	"team": "Creative team",
+	"url": "http://localhost:8080/reference",
+	"status": [
+		{
+			"name": "Payment",
+			"url": "http://team1.hack9.levi9.com/switchboard/price",
+			"healthy": true,
+			"throughput": 12.34
+		},
+		{
+			"name": "Call",
+			"url": "http://team1.hack9.levi9.com/switchboard/call",
+			"healthy": false
+		}
+	]
+}
