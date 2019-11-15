@@ -7,14 +7,14 @@ info:
 servers:
   - url: https://hack9.levi9.com/reference
 paths:
-  /initialize:
+  /reset:
     post:
-      summary: "Initialize the system"
-      description: "Accept configuration and initialize the service"
-      operationId: init
+      summary: "Reset system state"
+      description: "Delete all prior records of calls made and other operations."
+      operationId: reset
       responses:
         201:
-          description: "Configuration was successfully parsed and the server is ready."
+          description: "System state was cleared and the server is ready."
           headers:
             Location:
               description: URL of the server
@@ -24,7 +24,7 @@ paths:
   /switchboard/price:
     get:
       summary: "Get call price"
-      description: "Get (potential call price for the given called number, per minute. This will not initiate a call."
+      description: "Get (potential) call price for the given called number, per minute. This will not initiate a call."
       operationId: getPrice
       tags:
         - call
@@ -34,7 +34,8 @@ paths:
           required: true
           schema:
             type: string
-          description: "Called number, for which the call price should be calculated."   
+            format: telephone
+          description: "Telephone number to call, for which the call price should be calculated."   
       responses:
         200:
           description: "Price of a call, per second"
@@ -70,7 +71,11 @@ paths:
               $ref: "#/components/schemas/Call"
         required: true
       responses:
-        204:
+        200:
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CallCost"
           description: "Call accepted"
         400:
           description: "Incorrect input"
@@ -88,7 +93,7 @@ paths:
   /financial/invoice:
     post:
       summary: "Generate invoice"
-      description: "Initiate invoice generation. This can be sync or async call. Will return URL of the invoice."
+      description: "Initiate invoice generation for the given period. Call can be sync or async. Will return URL of the invoice."
       operationId: createInvoice
       tags:
         - financial
@@ -109,7 +114,7 @@ paths:
                 type: string
                 format: url
         202:
-          description: "Invoice is created."
+          description: "Invoice creation is underway."
           headers:
             Location:
               description: "URL where invoice can be retrieved."
@@ -144,6 +149,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Invoice"
+        404:
+          description: "No such invoice ID."
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
       
   /report:
     post:
@@ -157,7 +168,7 @@ paths:
         content:
           appliucation/json:
             schema:
-              $ref: '#/components/schemas/ReportRequest'
+              $ref: '#/components/schemas/ListingRequest'
         required: true
       responses:
         201:
@@ -176,6 +187,12 @@ paths:
               schema:
                 type: string
                 format: url
+        400:
+          description: "Error in arguments"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
             
   /report/{id}:
     get:
@@ -197,7 +214,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Report"
+                $ref: "#/components/schemas/Listing"
         404:
           description: "Unknown report"
           content:
@@ -240,6 +257,7 @@ components:
       type: array
       items:
         $ref: "#/components/schemas/Price"
+        
     Call:
       type: object
       properties:
@@ -258,26 +276,41 @@ components:
           type: integer
           format: int32
           description: "Call duration, in seconds"
-        geo_x:
-          type: number
-          format: float
-          description: "X coordinate of the caller"
-        geo_y:
-          type: number
-          format: float
-          description: "Y coordinate of the caller"
       required:
         - caller
         - number
         - start
         - duration
-    InvoiceRequest:
+    CallCost:
       type: object
       properties:
+        caller:
+          type: string
+          format: telephone
+          description: "Caller phone number"
         number:
           type: string
           format: telephone
-          description: "Telephone number to create invoice for."
+          description: "Number that was dialed"
+        start:
+          type: string
+          format: date-time
+          description: "Start time of the call"
+        duration:
+          type: integer
+          format: int32
+          description: "Call duration, in seconds"
+        cost:
+          type: number
+          format: float
+          description: "Cost of the call that was made"
+      required:
+        - cost
+          
+    InvoiceRequest:
+      description: "Request batch generation of invoices for all numbers and given period."
+      type: object
+      properties:
         start:
           type: string
           format: date-time
@@ -286,16 +319,32 @@ components:
           type: string
           format: date-time
           description: "End of the invoicing period"
+        callback:
+          description: "Callback URL to signal invoice completion. Callback expects a JSON of InvoiceDone"
+          type: string
+          format: url
       required:
-        - number
         - start
         - end
-    Invoice:
+        - callback
+    InvoiceDone:
+      description: "Report successful completion of an invoice"
       type: object
       properties:
         id:
+          description: "Invoice ID."
           type: string
-          description: "Invoice ID, has to be unique."
+        url:
+          description: "URL where the invoice can be fetched."
+          type: string
+          format: url
+      required:
+        - id
+        - url
+    InvoiceItem:
+      description: "One item in the invoice, related to one telephone number"
+      type: object
+      properties:
         number:
           type: string
           format: telephone
@@ -317,46 +366,76 @@ components:
           format: int32
           description: "Number of calls made during the invoicing period."
       required:
-        - id
         - number
         - start
         - end
         - sum
         - calls_made
-    ReportRequest:
+    Invoice:
+      description: "Complete invoice for a given period"
       type: object
       properties:
-        report_type:
-          type: integer
-          format: int32
+        id:
+          description: "Invoice ID, has to be unique."
+          type: string
+        items:
+          description: "Invoice items, per number"
+          type: array
+          items:
+            $ref: "#/components/schemas/InvoiceItem"
+        sum:
+          description: "Overall sum"
+          type: number
+          format: float
+      required:
+        - id
+        - items
+        - sum
+
+    ListingRequest:
+      description: "Request listing generation for the given telephonew numbers."
+      type: object
+      properties:
         start:
-          type: string
-          format: date-time
           description: "Start period of the report"
-        end:
           type: string
           format: date-time
+        end:
           description: "End period of the report"
+          type: string
+          format: date-time
         numbers:
+          description: "List of telephone numbers to generate listing for."
           type: array
           items:
             type: string
             format: telephone
+        callback:
+          description: "Callback URL to report successful creation of the listing."
+          type: string
+          format: url
       required:
-        - report_type
         - start
         - end
         - numbers
-    Report:
+    Listing:
+      description: "Status of the report being generated, with location, if done."
       type: object
       properties:
         id:
+          description: "ID of the report"
           type: string
           format: uuid
-          description: "ID of the report"
         status:
+          description: "Status of the report: processing or done"
           type: string
-          enum: [processing, done]
+          enum:
+            - processing
+            - done
         location:
+          description: "Cloud storage location where the report can be fetched."
           type: string
           format: url
+      required:
+        - id
+        - status
