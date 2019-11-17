@@ -12,6 +12,8 @@ paths:
       summary: "Reset system state"
       description: "Delete all prior records of calls made and other operations."
       operationId: reset
+      tags:
+        - system
       responses:
         201:
           description: "System state was cleared and the server is ready."
