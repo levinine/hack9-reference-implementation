@@ -5,6 +5,7 @@ package com.levi9.hack9.reference2019.radix;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Predicate;
 
 /**
  * Radix trie, allowing for partial lookup of values using string keys.
@@ -13,32 +14,42 @@ import java.util.Map;
  * 
  * The step between tree levels is always 1 character.
  * 
+ * @param <Entity> type of entity held by the tree.
+ * @param <Criterion> criterion to be used for value selection
  * @author n.milutinovic
  */
-public class RadixTrie<T> {
+public class RadixTrie<Entity, Criterion> {
 	/**
 	 * Radix trie node. It holds a value, which can be updated.
+	 * 
+	 * @param <Entity> type of entity held by the node.
+	 * @param <Criterion> type of criterion used to select the value
 	 * @author n.milutinovic
 	 *
 	 */
-	private static class Node<T> {
-		final private Map<Character, Node<T>> next = new HashMap<>();
-		private T value;
+	private static class Node<Entity, Criterion> {
+		final private Map<Character, Node<Entity, Criterion>> next = new HashMap<>();
+		private final Predicate<Criterion> matcher;
+		private Entity value;
 		
 		/**
-		 * Default constructor, init value to {@code null}
+		 * Minimal constructor, initialize value to {@code null}.
+		 * 
+		 * @param matcher predicate to match the value as candidate to yield.
 		 */
-		Node() {
-			this(null);
+		Node(Predicate<Criterion> matcher) {
+			this(null, matcher);
 		}
 		
 		/**
 		 * Construct node with given value.
 		 * 
 		 * @param value initial value to set
+		 * @param matcher predicate to match the value as candidate to yield.
 		 */
-		Node(T value) {
+		Node(Entity value, Predicate<Criterion> matcher) {
 			this.value = value;
+			this.matcher = matcher;
 		}
 		
 		/**
@@ -47,11 +58,11 @@ public class RadixTrie<T> {
 		 * @param key key to map to.
 		 * @param value value to insert.
 		 */
-		void insert(String key, T value) {
+		void insert(String key, Entity value) {
 			if (key.isEmpty()) {
 				this.value = value;
 			} else {
-				next.putIfAbsent(key.charAt(0), new Node<T>(null));
+				next.putIfAbsent(key.charAt(0), new Node<Entity, Criterion>(matcher));
 				next.get(key.charAt(0)).insert(key.substring(1), value);
 			}
 		}
@@ -62,26 +73,36 @@ public class RadixTrie<T> {
 		 * on the chain, down the tree, that was not null.
 		 * 
 		 * @param key key to lookup
+		 * @param c criterion used to select the candidate value.
 		 * @return value found or {@code null}.
 		 */
-		T get(String key) {
+		Entity get(String key, Criterion c) {
 			if (key.isEmpty()) {
-				return value;
+				return getValueIf(c);
 			}
 			final Character nextChar = key.charAt(0);
-			final Node<T> nextHop = next.get(nextChar);
+			final Node<Entity, Criterion> nextHop = next.get(nextChar);
 			if (nextHop == null) {
-				return value;
+				return getValueIf(c);
 			}
-			final T deepValue = nextHop.get(key.substring(1));
-			return (deepValue == null) ? value : deepValue;
+			final Entity nextValue = nextHop.get(key.substring(1), c);
+			return (nextValue == null) ? getValueIf(c) : nextValue;
+		}
+		
+		private Entity getValueIf(Criterion c) {
+			return matcher.test(c) ? value : null;
 		}
 	}
 	
-	private final Node<T> root;
+	private final Node<Entity, Criterion> root;
 	
-	public RadixTrie() {
-		root = new Node<T>();
+	/**
+	 * Construct initial Radix Trie. Set the matcher and initialize {@code root} node.
+	 * 
+	 * @param matcher predicate used to match candidate value.
+	 */
+	public RadixTrie(Predicate<Criterion> matcher) {
+		root = new Node<Entity, Criterion>(matcher);
 	}
 	
 	/**
@@ -91,7 +112,7 @@ public class RadixTrie<T> {
 	 * @param key key to put the value under.
 	 * @param value value to store under the given key.
 	 */
-	public void put(String key, T value) {
+	public void put(String key, Entity value) {
 		root.insert(sanitize(key), value);
 	}
 	
@@ -101,8 +122,8 @@ public class RadixTrie<T> {
 	 * @param key key to match.
 	 * @return value or {@code null}.
 	 */
-	public T get(String key) {
-		return root.get(sanitize(key));
+	public Entity get(String key, Criterion c) {
+		return root.get(sanitize(key), c);
 	}
 	
 	private static String sanitize(final String key) {
