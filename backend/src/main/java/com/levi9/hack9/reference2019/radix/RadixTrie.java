@@ -18,7 +18,7 @@ import java.util.function.Predicate;
  * @param <Criterion> criterion to be used for value selection
  * @author n.milutinovic
  */
-public class RadixTrie<Entity, Criterion> {
+public class RadixTrie<Entity> {
 	/**
 	 * Radix trie node. It holds a value, which can be updated.
 	 * 
@@ -27,9 +27,8 @@ public class RadixTrie<Entity, Criterion> {
 	 * @author n.milutinovic
 	 *
 	 */
-	private static class Node<Entity, Criterion> {
-		final private Map<Character, Node<Entity, Criterion>> next = new HashMap<>();
-		private final Predicate<Criterion> matcher;
+	private static class Node<Entity> {
+		final private Map<Character, Node<Entity>> next = new HashMap<>();
 		private Entity value;
 		
 		/**
@@ -37,8 +36,8 @@ public class RadixTrie<Entity, Criterion> {
 		 * 
 		 * @param matcher predicate to match the value as candidate to yield.
 		 */
-		Node(Predicate<Criterion> matcher) {
-			this(null, matcher);
+		Node() {
+			this(null);
 		}
 		
 		/**
@@ -47,9 +46,8 @@ public class RadixTrie<Entity, Criterion> {
 		 * @param value initial value to set
 		 * @param matcher predicate to match the value as candidate to yield.
 		 */
-		Node(Entity value, Predicate<Criterion> matcher) {
+		Node(Entity value) {
 			this.value = value;
-			this.matcher = matcher;
 		}
 		
 		/**
@@ -62,7 +60,7 @@ public class RadixTrie<Entity, Criterion> {
 			if (key.isEmpty()) {
 				this.value = value;
 			} else {
-				next.putIfAbsent(key.charAt(0), new Node<Entity, Criterion>(matcher));
+				next.putIfAbsent(key.charAt(0), new Node<Entity>());
 				next.get(key.charAt(0)).insert(key.substring(1), value);
 			}
 		}
@@ -76,33 +74,33 @@ public class RadixTrie<Entity, Criterion> {
 		 * @param c criterion used to select the candidate value.
 		 * @return value found or {@code null}.
 		 */
-		Entity get(String key, Criterion c) {
+		Entity get(String key, Predicate<Entity> test) {
 			if (key.isEmpty()) {
-				return getValueIf(c);
+				return getValueIf(test);
 			}
 			final Character nextChar = key.charAt(0);
-			final Node<Entity, Criterion> nextHop = next.get(nextChar);
+			final Node<Entity> nextHop = next.get(nextChar);
 			if (nextHop == null) {
-				return getValueIf(c);
+				return getValueIf(test);
 			}
-			final Entity nextValue = nextHop.get(key.substring(1), c);
-			return (nextValue == null) ? getValueIf(c) : nextValue;
+			final Entity nextValue = nextHop.get(key.substring(1), test);
+			return (nextValue == null) ? getValueIf(test) : nextValue;
 		}
 		
-		private Entity getValueIf(Criterion c) {
-			return matcher.test(c) ? value : null;
+		private Entity getValueIf(Predicate<Entity> test) {
+			return (value != null && test.test(value)) ? value : null;
 		}
 	}
 	
-	private final Node<Entity, Criterion> root;
+	private final Node<Entity> root;
 	
 	/**
 	 * Construct initial Radix Trie. Set the matcher and initialize {@code root} node.
 	 * 
 	 * @param matcher predicate used to match candidate value.
 	 */
-	public RadixTrie(Predicate<Criterion> matcher) {
-		root = new Node<Entity, Criterion>(matcher);
+	public RadixTrie() {
+		root = new Node<Entity>();
 	}
 	
 	/**
@@ -122,8 +120,8 @@ public class RadixTrie<Entity, Criterion> {
 	 * @param key key to match.
 	 * @return value or {@code null}.
 	 */
-	public Entity get(String key, Criterion c) {
-		return root.get(sanitize(key), c);
+	public Entity get(String key, Predicate<Entity> test) {
+		return root.get(sanitize(key), test);
 	}
 	
 	private static String sanitize(final String key) {
