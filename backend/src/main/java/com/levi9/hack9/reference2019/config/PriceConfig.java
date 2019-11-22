@@ -47,9 +47,9 @@ public class PriceConfig {
 				.map(record -> {
 					final String prefix = record.get("prefix");
 					final Instant from = parseTimestamp(record.get("from"));
-					final Instant to = parseTimestamp(record.get("to"));
+					//final Instant to = parseTimestamp(record.get("to"));
 					final float price = Float.parseFloat(record.get("price"));
-					return new Price(prefix, from, to, price);
+					return new Price(prefix, from, price);
 				}).collect(Collectors.toList());
 	}
 	

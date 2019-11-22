@@ -13,7 +13,6 @@ import java.time.Instant;
 public class Price {
 	public final String prefix;
 	public final Instant from;
-	public final Instant to;
 	public final float price;
 	
 	/**
@@ -24,11 +23,10 @@ public class Price {
 	 * @param to ending point in time.
 	 * @param price price for the given data point (prefix, period).
 	 */
-	public Price(String prefix, Instant from, Instant to, float price) {
+	public Price(String prefix, Instant from, float price) {
 		super();
 		this.prefix = prefix;
 		this.from = from;
-		this.to = to;
 		this.price = price;
 	}
 	
@@ -42,7 +40,6 @@ public class Price {
 		result = prime * result + ((from == null) ? 0 : from.hashCode());
 		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
 		result = prime * result + Float.floatToIntBits(price);
-		result = prime * result + ((to == null) ? 0 : to.hashCode());
 		return result;
 	}
 	
@@ -69,11 +66,6 @@ public class Price {
 		} else if (!prefix.equals(other.prefix))
 			return false;
 		if (Float.floatToIntBits(price) != Float.floatToIntBits(other.price))
-			return false;
-		if (to == null) {
-			if (other.to != null)
-				return false;
-		} else if (!to.equals(other.to))
 			return false;
 		return true;
 	}
