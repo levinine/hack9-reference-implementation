@@ -5,6 +5,7 @@ package com.levi9.hack9.reference2019.rest;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 
 import javax.validation.Valid;
@@ -37,13 +38,14 @@ public class SwitchboardController extends SwitchboardApiController {
 		this.priceResolver = priceResolver;
 	}
 	
+	@Override
     @RequestMapping(value = "/switchboard/price",
         produces = { "application/json" }, 
         method = RequestMethod.GET)
     public ResponseEntity<Price> getPrice(
     		@NotNull @Valid @RequestParam(value = "number", required = true) String number,
-    		@NotNull @Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime time) {
-		final Instant callTime = time.toInstant(ZoneOffset.ofHours(0));
+    		@NotNull @Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime time) {
+		final Instant callTime = time.toInstant();
 		final Float price = priceResolver.resolve(number, callTime).get();
 		final Price response = new Price();
 		response.setFrom(time); // TODO Fix this in lookup.
