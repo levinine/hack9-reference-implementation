@@ -24,6 +24,8 @@ import com.levi9.hack9.reference2019.radix.RadixTrie;
  */
 @Service
 public class PriceRegistryImpl implements PriceRegistry {
+	private static final Instant MAX_FUTURE = Instant.parse("2030-12-31T23:59:59.00Z");
+	
 	private final RadixTrie<SortedSet<PriceInterval>> tree = new RadixTrie<>();
 	
 	public PriceRegistryImpl(PriceConfig priceConfig) throws IOException {
@@ -41,9 +43,19 @@ public class PriceRegistryImpl implements PriceRegistry {
 		final Predicate<SortedSet<PriceInterval>> callTimeMatcher = getMatcher(timeOfCall);
 		return Optional
 				.ofNullable(tree.get(telephone, callTimeMatcher))
-				.flatMap(intervals -> intervals.stream()
-						.filter(getIntervalMatcher(timeOfCall))
-						.findFirst()); // TODO Use limit(2).collect(...) to get first and optional second, to get the end interval.
+				.flatMap(intervals -> {
+					final List<PriceInterval> slice = intervals.stream()
+							.filter(getIntervalMatcher(timeOfCall))
+							.limit(2)
+							.collect(Collectors.toList());
+					if (slice.size() == 0) {
+						return Optional.empty();
+					} else {
+						final PriceInterval first = slice.get(0);
+						final Instant end = (slice.size() == 1) ? MAX_FUTURE : slice.get(1).start;
+						return Optional.of(new PriceInterval(first.prefix, first.start, end, first.price));
+					}
+				});
 	}
 
 	private static Predicate<SortedSet<PriceInterval>> getMatcher(final Instant time) {

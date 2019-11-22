@@ -44,7 +44,7 @@ public class SwitchboardController extends SwitchboardApiController {
 		final PriceInterval price = priceResolver.resolve(number, callTime).get();
 		final Price response = new Price();
 		response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
-		response.setTo(price.start.atOffset(ZoneOffset.ofHours(0))); // TODO Fix this when we get end
+		response.setTo(price.end.atOffset(ZoneOffset.ofHours(0)));
 		response.setPrefix(price.prefix);
 		response.setPrice(price.price);
 		return ResponseEntity.ok(response);

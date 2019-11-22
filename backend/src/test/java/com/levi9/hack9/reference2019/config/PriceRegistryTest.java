@@ -39,9 +39,9 @@ public class PriceRegistryTest {
 	 */
 	@Test
 	public void test_get_good_prices() {
-		assertEquals(Float.valueOf(2.34F), registry.lookup("+381 21 123456", FIRTS_OF_MARCH).get(), "Novi Sad, 1st of March");
-		assertEquals(Float.valueOf(3.24F), registry.lookup("+381 21 123456", FIRST_OF_SEP).get(), "Novi Sad, 1st of Sep");
-		assertEquals(Float.valueOf(6.0F), registry.lookup("+381 64 123456", FIRTS_OF_MARCH).get(), "MT:S, 1st of March");
+		assertEquals(2.34F, registry.lookup("+381 21 123456", FIRTS_OF_MARCH).get().price, "Novi Sad, 1st of March");
+		assertEquals(3.24F, registry.lookup("+381 21 123456", FIRST_OF_SEP).get().price, "Novi Sad, 1st of Sep");
+		assertEquals(6.0F, registry.lookup("+381 64 123456", FIRTS_OF_MARCH).get().price, "MT:S, 1st of March");
 	}
 	
 	/**
