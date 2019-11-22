@@ -5,6 +5,7 @@ package com.levi9.hack9.reference2019.rest;
 
 import java.time.Instant;
 import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -19,6 +20,7 @@ import com.levi9.hack9.reference.api.SwitchboardApiController;
 import com.levi9.hack9.reference.api.model.Call;
 import com.levi9.hack9.reference.api.model.CallCost;
 import com.levi9.hack9.reference.api.model.Price;
+import com.levi9.hack9.reference2019.config.PriceInterval;
 import com.levi9.hack9.reference2019.service.PriceResolver;
 
 /**
@@ -39,12 +41,12 @@ public class SwitchboardController extends SwitchboardApiController {
     		@NotNull @Valid @RequestParam(value = "number", required = true) String number,
     		@NotNull @Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime time) {
 		final Instant callTime = time.toInstant();
-		final Float price = priceResolver.resolve(number, callTime).get();
+		final PriceInterval price = priceResolver.resolve(number, callTime).get();
 		final Price response = new Price();
-		response.setFrom(time); // TODO Fix this in lookup.
-		response.setTo(time);
-		response.setPrefix(number);
-		response.setPrice(price);
+		response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
+		response.setTo(price.start.atOffset(ZoneOffset.ofHours(0))); // TODO Fix this when we get end
+		response.setPrefix(price.prefix);
+		response.setPrice(price.price);
 		return ResponseEntity.ok(response);
 
     }

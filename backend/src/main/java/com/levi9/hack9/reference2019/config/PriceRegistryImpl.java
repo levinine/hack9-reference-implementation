@@ -31,20 +31,19 @@ public class PriceRegistryImpl implements PriceRegistry {
 		Map<String, List<Price>> groupedPrices = priceList.stream().collect(Collectors.groupingBy(price -> price.prefix));
 		groupedPrices.forEach((prefix, prices) -> {
 			final SortedSet<PriceInterval> priceIntervals = prices.stream()
-					.map(price -> new PriceInterval(price.from, price.price))
+					.map(price -> new PriceInterval(price.prefix, price.from, null, price.price))
 					.collect(Collectors.toCollection(TreeSet::new));
 			tree.put(prefix, priceIntervals);
 		});
 	}
 	@Override
-	public Optional<Float> lookup(final String telephone, final Instant timeOfCall) {
+	public Optional<PriceInterval> lookup(final String telephone, final Instant timeOfCall) {
 		final Predicate<SortedSet<PriceInterval>> callTimeMatcher = getMatcher(timeOfCall);
 		return Optional
 				.ofNullable(tree.get(telephone, callTimeMatcher))
 				.flatMap(intervals -> intervals.stream()
 						.filter(getIntervalMatcher(timeOfCall))
-						.findFirst())
-				.map(interval -> interval.price);
+						.findFirst()); // TODO Use limit(2).collect(...) to get first and optional second, to get the end interval.
 	}
 
 	private static Predicate<SortedSet<PriceInterval>> getMatcher(final Instant time) {

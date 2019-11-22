@@ -6,6 +6,8 @@ package com.levi9.hack9.reference2019.service;
 import java.time.Instant;
 import java.util.Optional;
 
+import com.levi9.hack9.reference2019.config.PriceInterval;
+
 /**
  * Price resolver service.
  * 
@@ -18,5 +20,5 @@ public interface PriceResolver {
 	 * @param telephone telephone number, optional spaces removed.
 	 * @return Price for the call to the given number, if it is listed, {@code None} otherwise.
 	 */
-	Optional<Float> resolve(String telephone, Instant time);
+	Optional<PriceInterval> resolve(String telephone, Instant time);
 }

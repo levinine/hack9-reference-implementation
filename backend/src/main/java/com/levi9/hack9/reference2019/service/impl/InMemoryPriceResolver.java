@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
+import com.levi9.hack9.reference2019.config.PriceInterval;
 import com.levi9.hack9.reference2019.config.PriceRegistry;
 import com.levi9.hack9.reference2019.service.PriceResolver;
 
@@ -24,7 +25,7 @@ public class InMemoryPriceResolver implements PriceResolver {
 	}
 	
 	@Override
-	public Optional<Float> resolve(String telephone, Instant time) {
+	public Optional<PriceInterval> resolve(String telephone, Instant time) {
 		return registry.lookup(telephone, time);
 	}
 
