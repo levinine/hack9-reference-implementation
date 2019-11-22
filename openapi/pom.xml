@@ -102,7 +102,7 @@
                             <inputSpec>${project.basedir}/src/main/resources/hack9-reference.yml</inputSpec>
                             <generatorName>spring</generatorName>
                             <configOptions>
-                                <dateLibrary>java8</dateLibrary>
+                                <dateLibrary>java8-localdatetime</dateLibrary>
                                 <java8>true</java8>
                             </configOptions>
                             <library>spring-boot</library>

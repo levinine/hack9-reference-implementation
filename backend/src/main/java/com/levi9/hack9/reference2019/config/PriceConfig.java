@@ -16,12 +16,15 @@ import java.util.stream.StreamSupport;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 /**
  * Read CSV configuration file with prices and produce a collection.
  * 
  * @author n.milutinovic
  */
+@Component
 public class PriceConfig {
 	private final String csvFile;
 	
@@ -30,7 +33,7 @@ public class PriceConfig {
 	 * 
 	 * @param csvFile location of CSV config file, relative to ${CWD}
 	 */
-	public PriceConfig(final String csvFile) {
+	public PriceConfig(@Value("${hack9.configuration.csv}") final String csvFile) {
 		this.csvFile = csvFile;
 	}
 	

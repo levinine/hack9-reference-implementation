@@ -31,7 +31,7 @@ public class PriceRegistryTest {
 	@BeforeEach
 	public void setUp() throws IOException {
 		final PriceConfig priceConfig = new PriceConfig("src/test/resources/prices.csv");
-		registry = new PriceRegistryImpl(priceConfig.getPrices());
+		registry = new PriceRegistryImpl(priceConfig);
 	}
 	
 	/**

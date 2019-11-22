@@ -11,3 +11,7 @@ management:
         include:
         - info
         - mappings
+        
+hack9:
+  configuration:
+    csv: "src/main/resources/prices.csv"

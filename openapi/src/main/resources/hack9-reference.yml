@@ -37,7 +37,14 @@ paths:
           schema:
             type: string
             format: telephone
-          description: "Telephone number to call, for which the call price should be calculated."   
+          description: "Telephone number to call, for which the call price should be calculated." 
+        - name: time
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+          description: time of the call.
       responses:
         200:
           description: "Price of a call, per second"
