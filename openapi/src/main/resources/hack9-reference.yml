@@ -10,20 +10,15 @@ paths:
   /reset:
     post:
       summary: "Reset system state"
-      description: "Delete all prior records of calls made and other operations."
+      description: "Delete all prior records of calls and invoices made and bring system to initial state."
       operationId: reset
       tags:
         - system
       responses:
         201:
           description: "System state was cleared and the server is ready."
-          headers:
-            Location:
-              description: URL of the server
-              schema:
-                type: string
               
-  /switchboard/price:
+  /switch/price:
     get:
       summary: "Get call price"
       description: "Get (potential) call price for the given called number, per minute. This will not initiate a call."
@@ -40,11 +35,10 @@ paths:
           description: "Telephone number to call, for which the call price should be calculated." 
         - name: time
           in: query
-          required: true
           schema:
             type: string
             format: date-time
-          description: time of the call.
+          description: "date and time of the call, in RFC-3339 format, section 5.6. If ommitted, default value is NOW."
       responses:
         200:
           description: "Price of a call, per second"
@@ -65,10 +59,10 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
  
-  /switchboard/call:
+  /switch/call:
     post:
       summary: "Register a call"
-      description: "Register details of a call that was made."
+      description: "Register details of a call that was made and calcualte the cost of the call."
       operationId: registerCall
       tags:
         - call
@@ -102,34 +96,20 @@ paths:
   /financial/invoice:
     post:
       summary: "Generate invoice"
-      description: "Initiate invoice generation for the given period. Call can be sync or async. Will return URL of the invoice."
+      description: "Initiate invoice generation for all calls initiated within the given period. For each calling number and given period, one invoice needs to be generated. Each invoice has a unique ID. When invoices generation is finished, given callback URL should be called."
       operationId: createInvoice
       tags:
         - financial
       requestBody:
-        description: "Invloice request"
+        description: "Invoice request"
         content:
           application/json:
             schema:
               $ref: "#/components/schemas/InvoiceRequest"
         required: true
       responses:
-        201:
-          description: "Invoice is created."
-          headers:
-            Location:
-              description: "URL where invoice can be retrieved."
-              schema:
-                type: string
-                format: url
         202:
           description: "Invoice creation is underway."
-          headers:
-            Location:
-              description: "URL where invoice can be retrieved."
-              schema:
-                type: string
-                format: url
         400:
           description: "Bad parameters"
           content:
@@ -164,66 +144,29 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-      
-  /report:
-    post:
-      summary: "Request report creation"
-      description: "Request asynchronous report creation."
-      operationId: createReport
-      tags:
-        - financial
-      requestBody:
-        description: "Report request body"
-        content:
-          appliucation/json:
-            schema:
-              $ref: '#/components/schemas/ListingRequest'
-        required: true
-      responses:
-        201:
-          description: "Report has been created"
-          headers:
-            Location:
-              description: "URL for the report"
-              schema:
-                type: string
-                format: url
-        202:
-          description: "Report request is under processing"
-          headers:
-            Location:
-              description: "URL of the report"
-              schema:
-                type: string
-                format: url
-        400:
-          description: "Error in arguments"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Error"
             
-  /report/{id}:
+  /financial/report/{calling}:
     get:
-      summary: "Get report status and location"
-      description: "Get report status and location"
+      summary: "Get financial status of the calling number (client)."
+      description: "Get all previous invopices and current, uninvoiced calls of the given number."
       operationId: getReport
       tags:
         - financial
       parameters:
-        - name: id
+        - name: calling
           schema:
             type: string
+            format: telephone
           required: true
           in: path
-          description: "Report ID"
+          description: "Calling number"
       responses:
         200:
           description: "Report status"
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Listing"
+                $ref: "#/components/schemas/Report"
         404:
           description: "Unknown report"
           content:
@@ -231,6 +174,41 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
 
+  /listing/{calling}:
+    get:
+      summary: ""
+      description: ""
+      operationId: listing
+      tags:
+        - call
+      parameters:
+        - name: calling
+          in: path
+          required: true
+          schema:
+            type: string
+            format: telephone
+        - name: from
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        200:
+          description: ""
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Listing"
+        
+      
 components:
   schemas:
     Error:
@@ -241,10 +219,11 @@ components:
           description: "Error message"
     Price:
       type: object
+      description: "Price of the call is determined by the time when the call was made and the number that was called. Prices are matched by the longest prefix of the called number and the effective date."
       properties:
         prefix:
           type: string
-          description: "Telephone number prefix this price is for. for instance '+381 21'"
+          description: "Telephone number prefix this price is for. for instance '381 21'"
         price:
           type: number
           format: float
@@ -252,29 +231,30 @@ components:
         from:
           type: string
           format: date-time
-          description: "Time this price is valid from."
-        to:
-          type: string
-          format: date-time
-          description: "Time this price is valid to."
+          description: "Effective date from which this price is valid."
+        initial:
+          type: number
+          format: int32
+          description: "Initial number of seconds for the esablishing the call."
+        increment:
+          type: number
+          format: int32
+          description: "Number of seconds for the call duration rounding."
       required:
         - prefix
         - price
         - from
-        - to
-    Config:
-      type: array
-      items:
-        $ref: "#/components/schemas/Price"
+        - initial
+        - increment
         
     Call:
       type: object
       properties:
-        caller:
+        calling:
           type: string
           format: telephone
-          description: "Caller number"
-        number:
+          description: "Caller number, list of digits, cannot start with 0."
+        called:
           type: string
           description: "Number being called."
         start:
@@ -293,11 +273,11 @@ components:
     CallCost:
       type: object
       properties:
-        caller:
+        calling:
           type: string
           format: telephone
           description: "Caller phone number"
-        number:
+        called:
           type: string
           format: telephone
           description: "Number that was dialed"
@@ -309,12 +289,24 @@ components:
           type: integer
           format: int32
           description: "Call duration, in seconds"
+        rounded:
+          type: integer
+          format: int32
+          description: "Call duration, in seconds, with initial, rounded to increment."
+        price:
+          type: number
+          format: float
+          description: "Price of the call per minute, used to calculate the cost."
         cost:
           type: number
           format: float
           description: "Cost of the call that was made"
       required:
         - cost
+        - calling
+        - called
+        - start
+        - duration
           
     InvoiceRequest:
       description: "Request batch generation of invoices for all numbers and given period."
@@ -336,25 +328,39 @@ components:
         - start
         - end
         - callback
-    InvoiceDone:
-      description: "Report successful completion of an invoice"
+    Invoices:
+      description: "Report successful completion of an invoice to callback URL"
       type: object
       properties:
-        id:
-          description: "Invoice ID."
-          type: string
-        url:
-          description: "URL where the invoice can be fetched."
-          type: string
-          format: url
+        invoices:
+          type: array
+          items:
+            properties:
+              id:
+                type: string
+                description: ""
+              calling:
+                type: string
+                format: telephone
+                description: ""
+              sum:
+                type: number
+                format: float
+              count:
+                type: number
+                format: int64
+            required:
+              - id
+              - calling
+              - sum
+              - count
       required:
-        - id
-        - url
-    InvoiceItem:
+        - invoices
+    Invoice:
       description: "One item in the invoice, related to one telephone number"
       type: object
       properties:
-        number:
+        calling:
           type: string
           format: telephone
           description: "Telephone number for which the invoice is created"
@@ -370,7 +376,7 @@ components:
           type: number
           format: float
           description: "Amount to be payed for the invoice"
-        calls_made:
+        count:
           type: integer
           format: int32
           description: "Number of calls made during the invoicing period."
@@ -379,72 +385,41 @@ components:
         - start
         - end
         - sum
-        - calls_made
-    Invoice:
-      description: "Complete invoice for a given period"
+        - count
+
+    Report:
+      description: "Report for one telephone number"
       type: object
       properties:
-        id:
-          description: "Invoice ID, has to be unique."
+        calling:
           type: string
-        items:
-          description: "Invoice items, per number"
+          format: telephone
+        invoices:
           type: array
           items:
-            $ref: "#/components/schemas/InvoiceItem"
-        sum:
-          description: "Overall sum"
+            properties:
+              id:
+                type: string
+                description: "Invoice ID"
+              sum:
+                type: number
+                format: float
+        remaining:
           type: number
           format: float
-      required:
-        - id
-        - items
-        - sum
-
-    ListingRequest:
-      description: "Request listing generation for the given telephonew numbers."
-      type: object
-      properties:
-        start:
-          description: "Start period of the report"
-          type: string
-          format: date-time
-        end:
-          description: "End period of the report"
-          type: string
-          format: date-time
-        numbers:
-          description: "List of telephone numbers to generate listing for."
-          type: array
-          items:
-            type: string
-            format: telephone
-        callback:
-          description: "Callback URL to report successful creation of the listing."
-          type: string
-          format: url
-      required:
-        - start
-        - end
-        - numbers
+        
     Listing:
       description: "Status of the report being generated, with location, if done."
       type: object
       properties:
-        id:
-          description: "ID of the report"
+        calling:
           type: string
-          format: uuid
-        status:
-          description: "Status of the report: processing or done"
-          type: string
-          enum:
-            - processing
-            - done
-        location:
-          description: "Cloud storage location where the report can be fetched."
-          type: string
-          format: url
+          format: telephone
+        calls:
+          type: array
+          items:
+            $ref: "#/components/schemas/CallCost"
       required:
-        - id
-        - status
+        - calling
+        - calls
+
