@@ -3,6 +3,8 @@
  */
 package com.levi9.hack9.reference2019.rest;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -44,9 +46,10 @@ public class SwitchboardController extends SwitchboardApiController {
 		final PriceInterval price = priceResolver.resolve(number, callTime).get();
 		final Price response = new Price();
 		response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
-		response.setTo(price.end.atOffset(ZoneOffset.ofHours(0)));
 		response.setPrefix(price.prefix);
 		response.setPrice(price.price);
+		response.setInitial(BigDecimal.valueOf(price.initial));
+		response.setIncrement(BigDecimal.valueOf(price.increment));
 		return ResponseEntity.ok(response);
 
     }

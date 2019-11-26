@@ -48,7 +48,7 @@ class PriceParserTest {
 		Collection<Price> result = priceParser.getPrices();
 		Price first = result.stream().findFirst().get();
 		assertEquals("+38121", first.prefix, "Prefix");
-		assertEquals(Instant.parse("2019-01-01T00:00:00.00Z"), first.from, "From");
+		assertEquals(Instant.parse("2019-01-01T00:00:00.00Z"), first.start, "From");
 		assertEquals(2.34F, first.price, "Price");
 	}
 }

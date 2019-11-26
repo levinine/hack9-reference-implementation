@@ -4,6 +4,7 @@
 package com.levi9.hack9.reference2019.config;
 
 import java.time.Instant;
+import java.util.Objects;
 
 /**
  * A price entity, as written in the CSV config file.
@@ -12,8 +13,12 @@ import java.time.Instant;
  */
 public class Price {
 	public final String prefix;
-	public final Instant from;
+	public final String country;
+	public final String city;
+	public final Instant start;
 	public final float price;
+	public final int initial;
+	public final int increment;
 	
 	/**
 	 * Case class constructor.
@@ -23,50 +28,34 @@ public class Price {
 	 * @param to ending point in time.
 	 * @param price price for the given data point (prefix, period).
 	 */
-	public Price(String prefix, Instant from, float price) {
+	public Price(String prefix, String country, String city, float price, Instant start, int initial, int increment) {
 		super();
 		this.prefix = prefix;
-		this.from = from;
+		this.country = country;
+		this.city = city;
+		this.start = start;
 		this.price = price;
+		this.initial = initial;
+		this.increment = increment;
 	}
-	
-	/**
-	 * Eclipse-generated.
-	 */
+
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((from == null) ? 0 : from.hashCode());
-		result = prime * result + ((prefix == null) ? 0 : prefix.hashCode());
-		result = prime * result + Float.floatToIntBits(price);
-		return result;
+		return Objects.hash(city, country, increment, initial, prefix, price, start);
 	}
-	
-	/**
-	 * Eclipse-generated.
-	 */
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
 			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
+		if (!(obj instanceof Price))
 			return false;
 		Price other = (Price) obj;
-		if (from == null) {
-			if (other.from != null)
-				return false;
-		} else if (!from.equals(other.from))
-			return false;
-		if (prefix == null) {
-			if (other.prefix != null)
-				return false;
-		} else if (!prefix.equals(other.prefix))
-			return false;
-		if (Float.floatToIntBits(price) != Float.floatToIntBits(other.price))
-			return false;
-		return true;
+		return Objects.equals(city, other.city) && Objects.equals(country, other.country)
+				&& increment == other.increment && initial == other.initial && Objects.equals(prefix, other.prefix)
+				&& Float.floatToIntBits(price) == Float.floatToIntBits(other.price)
+				&& Objects.equals(start, other.start);
 	}
+
+	
 }

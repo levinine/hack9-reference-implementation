@@ -15,18 +15,22 @@ public final class PriceInterval implements Comparable<PriceInterval> {
 	public final Instant start;
 	public final Instant end;
 	public final float price;
+	public final int initial;
+	public final int increment;
 	
 	/**
 	 * @param start
 	 * @param end
 	 * @param price
 	 */
-	public PriceInterval(String prefix, Instant start, Instant end, float price) {
+	public PriceInterval(String prefix, Instant start, Instant end, float price, int initial, int increment) {
 		super();
 		this.prefix = prefix;
 		this.start = start;
 		this.end = end;
 		this.price = price;
+		this.initial = initial;
+		this.increment = increment;
 	}
 	
 	/**
@@ -37,17 +41,11 @@ public final class PriceInterval implements Comparable<PriceInterval> {
 		return o.start.compareTo(start);
 	}
 
-	/**
-	 * Eclipse generated.
-	 */
 	@Override
 	public int hashCode() {
-		return Objects.hash(end, prefix, price, start);
+		return Objects.hash(end, increment, initial, prefix, price, start);
 	}
 
-	/**
-	 * Eclipse generated.
-	 */
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -55,8 +53,11 @@ public final class PriceInterval implements Comparable<PriceInterval> {
 		if (!(obj instanceof PriceInterval))
 			return false;
 		PriceInterval other = (PriceInterval) obj;
-		return Objects.equals(end, other.end) && Objects.equals(prefix, other.prefix)
+		return Objects.equals(end, other.end) && increment == other.increment && initial == other.initial
+				&& Objects.equals(prefix, other.prefix)
 				&& Float.floatToIntBits(price) == Float.floatToIntBits(other.price)
 				&& Objects.equals(start, other.start);
 	}
+
+	
 }

@@ -33,7 +33,7 @@ public class PriceRegistryImpl implements PriceRegistry {
 		Map<String, List<Price>> groupedPrices = priceList.stream().collect(Collectors.groupingBy(price -> price.prefix));
 		groupedPrices.forEach((prefix, prices) -> {
 			final SortedSet<PriceInterval> priceIntervals = prices.stream()
-					.map(price -> new PriceInterval(price.prefix, price.from, null, price.price))
+					.map(price -> new PriceInterval(price.prefix, price.start, null, price.price, price.initial, price.increment))
 					.collect(Collectors.toCollection(TreeSet::new));
 			tree.put(prefix, priceIntervals);
 		});
@@ -53,7 +53,7 @@ public class PriceRegistryImpl implements PriceRegistry {
 					} else {
 						final PriceInterval first = slice.get(0);
 						final Instant end = (slice.size() == 1) ? MAX_FUTURE : slice.get(1).start;
-						return Optional.of(new PriceInterval(first.prefix, first.start, end, first.price));
+						return Optional.of(new PriceInterval(first.prefix, first.start, end, first.price, first.initial, first.increment));
 					}
 				});
 	}
