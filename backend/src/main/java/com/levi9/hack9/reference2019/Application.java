@@ -3,8 +3,12 @@
  */
 package com.levi9.hack9.reference2019;
 
+import org.openapitools.jackson.nullable.JsonNullableModule;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.context.annotation.Bean;
+
+import com.fasterxml.jackson.databind.Module;
 
 /**
  * Spring Boot application.
@@ -21,4 +25,9 @@ public class Application {
 	public static void main(String[] args) {
 		SpringApplication.run(Application.class, args);
 	}
+	
+	@Bean
+    public Module jsonNullableModule() {
+        return new JsonNullableModule();
+    }
 }

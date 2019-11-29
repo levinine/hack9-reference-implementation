@@ -11,7 +11,22 @@ management:
         include:
         - info
         - mappings
-        
+       
+spring:
+  datasource:
+    url: jdbc:h2:mem:test_mem
+    username: sa
+    password: ""
+    initialization-mode: ALWAYS
+    platform: h2
+  jackson:
+    deserialization:
+      use-big-decimal-for-floats: true
+      use-big-integer-for-ints: false
+ 
 hack9:
   configuration:
-    csv: "src/main/resources/prices.csv"
+    csv: "src/main/resources/Codes.csv"
+    
+
+  

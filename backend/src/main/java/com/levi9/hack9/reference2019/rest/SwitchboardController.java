@@ -14,6 +14,7 @@ import javax.validation.constraints.NotNull;
 
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
@@ -23,6 +24,7 @@ import com.levi9.hack9.reference.api.model.Call;
 import com.levi9.hack9.reference.api.model.CallCost;
 import com.levi9.hack9.reference.api.model.Price;
 import com.levi9.hack9.reference2019.config.PriceInterval;
+import com.levi9.hack9.reference2019.service.CallService;
 import com.levi9.hack9.reference2019.service.PriceResolver;
 
 /**
@@ -32,10 +34,12 @@ import com.levi9.hack9.reference2019.service.PriceResolver;
 @RestController
 public class SwitchboardController extends SwitchboardApiController {
 	private PriceResolver priceResolver;
+	private CallService callService;
 	
-	public SwitchboardController(NativeWebRequest request, PriceResolver priceResolver) {
+	public SwitchboardController(NativeWebRequest request, PriceResolver priceResolver, CallService callService) {
 		super(request);
 		this.priceResolver = priceResolver;
+		this.callService = callService;
 	}
 	
 	@Override
@@ -55,8 +59,9 @@ public class SwitchboardController extends SwitchboardApiController {
     }
 	
 	@Override
-	public ResponseEntity<CallCost> registerCall(@Valid Call call) {
-		// TODO Auto-generated method stub
-		return super.registerCall(call);
+	public ResponseEntity<CallCost> registerCall(@Valid @RequestBody Call call) {
+		return callService.registerCall(call)
+				.map(ResponseEntity::ok)
+				.orElseGet(() -> ResponseEntity.notFound().build());
 	}
 }
