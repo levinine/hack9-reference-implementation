@@ -4,8 +4,12 @@
 package com.levi9.hack9.reference2019.service.impl;
 
 import java.math.BigDecimal;
+import java.sql.ResultSet;
 import java.time.Instant;
+import java.time.OffsetDateTime;
+import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.levi9.hack9.reference.api.model.Call;
 import com.levi9.hack9.reference.api.model.CallCost;
+import com.levi9.hack9.reference.api.model.Listing;
 import com.levi9.hack9.reference.api.model.Price;
 import com.levi9.hack9.reference2019.config.PriceInterval;
 import com.levi9.hack9.reference2019.service.CallService;
@@ -96,6 +101,31 @@ public class CallServiceDbImpl implements CallService {
 		final int remainder = effective % increment;
 		final int actual =  (remainder == 0) ? effective : (effective - remainder + increment);
 		return price.getPrice() * actual / 60;
+	}
+
+	@Override
+	public Listing getListing(String caller, Instant from, Instant to) {
+		final String GET_LISTING = "SELECT "
+				+ "c.called AS called, c.started AS started, c.duration AS duration, c.cost AS cost, "
+				+ "p.price AS price, p.initial AS initial, p.increment AS increment "
+				+ "FROM Calls c "
+				+ "JOIN Prices p ON p.id = c.price_id "
+				+ "WHERE c.caller = :caller AND started >= :from AND started <= :to";
+		MapSqlParameterSource parameters = new MapSqlParameterSource();
+		parameters.addValue("caller", caller);
+		parameters.addValue("from", from);
+		parameters.addValue("to", to);
+		final List<CallCost> calls = jdbcTemplate.query(GET_LISTING, parameters, (ResultSet rs, int rowNum) -> {
+			final CallCost callCost = new CallCost()
+					.calling(caller)
+					.called(rs.getString("called"))
+					.start(OffsetDateTime.ofInstant(Instant.ofEpochMilli(rs.getTimestamp("started").getTime()), ZoneId.of("UTC")))
+					.duration(rs.getInt("duration"))
+					.cost(rs.getFloat("cost"))
+					.price(rs.getFloat("price"));
+			return callCost;
+		});
+		return new Listing().calling(caller).calls(calls);
 	}
 	
 	/* private static float calcCost(Price price, int duration) {

@@ -8,6 +8,7 @@ import java.util.Optional;
 
 import com.levi9.hack9.reference.api.model.Call;
 import com.levi9.hack9.reference.api.model.CallCost;
+import com.levi9.hack9.reference.api.model.Listing;
 import com.levi9.hack9.reference.api.model.Price;
 
 /**
@@ -31,4 +32,14 @@ public interface CallService {
 	 * @return cost of the call.
 	 */
 	Optional<CallCost> registerCall(Call call);
+	/**
+	 * Get the listing of number called from the given number in the
+	 * given period of time.
+	 * 
+	 * @param caller the number for which we generate listing.
+	 * @param from starting moment of listing period.
+	 * @param to ending moment of listing period.
+	 * @return listing for the given period, if found
+	 */
+	Listing getListing(String caller, Instant from, Instant to);
 }
