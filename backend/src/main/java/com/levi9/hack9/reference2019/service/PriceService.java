@@ -13,7 +13,7 @@ import com.levi9.hack9.reference2019.config.PriceInterval;
  * 
  * @author n.milutinovic
  */
-public interface PriceResolver {
+public interface PriceService {
 	/**
 	 * Given telephone number, determine the price, if possible.
 	 * 

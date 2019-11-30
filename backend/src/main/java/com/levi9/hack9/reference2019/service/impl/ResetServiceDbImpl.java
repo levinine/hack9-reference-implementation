@@ -6,6 +6,8 @@ package com.levi9.hack9.reference2019.service.impl;
 import java.io.IOException;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,6 +26,7 @@ import com.levi9.hack9.reference2019.service.ResetService;
 public class ResetServiceDbImpl implements ResetService {
 	@Autowired
 	private JdbcTemplate jdbc;
+	@Autowired
 	private NamedParameterJdbcTemplate template;
 	
 	@Autowired
@@ -36,6 +39,7 @@ public class ResetServiceDbImpl implements ResetService {
 
 	}
 
+	@PostConstruct
 	@Override
 	public void initialize() {
 		final String sqlInsert = "INSERT INTO Prices (id, country, city, prefix, valid_from, price, initial, increment)"

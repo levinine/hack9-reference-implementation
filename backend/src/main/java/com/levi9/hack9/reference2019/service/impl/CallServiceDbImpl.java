@@ -9,6 +9,7 @@ import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,7 +24,7 @@ import com.levi9.hack9.reference.api.model.Listing;
 import com.levi9.hack9.reference.api.model.Price;
 import com.levi9.hack9.reference2019.config.PriceInterval;
 import com.levi9.hack9.reference2019.service.CallService;
-import com.levi9.hack9.reference2019.service.PriceResolver;
+import com.levi9.hack9.reference2019.service.PriceService;
 
 /**
  * Implementation of call service based on Spring JDBC.
@@ -36,7 +37,7 @@ public class CallServiceDbImpl implements CallService {
 	private NamedParameterJdbcTemplate jdbcTemplate;
 	
 	@Autowired
-	private PriceResolver priceResolver;
+	private PriceService priceResolver;
 	
 	@Override
 	public Optional<Price> getPrice(String called, Instant time) {
@@ -92,7 +93,7 @@ public class CallServiceDbImpl implements CallService {
 	}
 	
 	private static String getPriceId(Price price) {
-		return price.getPrefix() + "-" + price.getFrom();
+		return price.getPrefix() + "-" + price.getFrom().format(DateTimeFormatter.ISO_INSTANT);
 	}
 	
 	private static float calculateCost(Price price, int duration) {

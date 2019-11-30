@@ -25,7 +25,7 @@ import com.levi9.hack9.reference.api.model.CallCost;
 import com.levi9.hack9.reference.api.model.Price;
 import com.levi9.hack9.reference2019.config.PriceInterval;
 import com.levi9.hack9.reference2019.service.CallService;
-import com.levi9.hack9.reference2019.service.PriceResolver;
+import com.levi9.hack9.reference2019.service.PriceService;
 
 /**
  * @author n.milutinovic
@@ -33,10 +33,10 @@ import com.levi9.hack9.reference2019.service.PriceResolver;
  */
 @RestController
 public class SwitchboardController extends SwitchboardApiController {
-	private PriceResolver priceResolver;
+	private PriceService priceResolver;
 	private CallService callService;
 	
-	public SwitchboardController(NativeWebRequest request, PriceResolver priceResolver, CallService callService) {
+	public SwitchboardController(NativeWebRequest request, PriceService priceResolver, CallService callService) {
 		super(request);
 		this.priceResolver = priceResolver;
 		this.callService = callService;
@@ -47,15 +47,19 @@ public class SwitchboardController extends SwitchboardApiController {
     		@NotNull @Valid @RequestParam(value = "number", required = true) String number,
     		@NotNull @Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime time) {
 		final Instant callTime = time.toInstant();
-		final PriceInterval price = priceResolver.resolve(number, callTime).get();
-		final Price response = new Price();
-		response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
-		response.setPrefix(price.prefix);
-		response.setPrice(price.price);
-		response.setInitial(BigDecimal.valueOf(price.initial));
-		response.setIncrement(BigDecimal.valueOf(price.increment));
-		return ResponseEntity.ok(response);
-
+		//final PriceInterval price = priceResolver.resolve(number, callTime).get();
+		return priceResolver.resolve(number, callTime)
+			.map(price -> {
+				final Price response = new Price();
+				response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
+				response.setPrefix(price.prefix);
+				response.setPrice(price.price);
+				response.setInitial(BigDecimal.valueOf(price.initial));
+				response.setIncrement(BigDecimal.valueOf(price.increment));
+				return response;
+			})
+			.map(ResponseEntity::ok)
+			.orElse(ResponseEntity.notFound().build());
     }
 	
 	@Override

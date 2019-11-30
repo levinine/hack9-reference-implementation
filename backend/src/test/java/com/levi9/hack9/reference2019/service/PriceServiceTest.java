@@ -22,8 +22,8 @@ import com.levi9.hack9.reference2019.service.impl.InMemoryPriceResolver;
  * @author n.milutinovic
  *
  */
-public class PriceResolverTest {
-	private PriceResolver resolver;
+public class PriceServiceTest {
+	private PriceService resolver;
 	
 	@BeforeEach
 	public void setUp() throws IOException {
