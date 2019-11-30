@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.levi9.hack9.reference.api.model.Invoice;
 import com.levi9.hack9.reference.api.model.InvoiceRequest;
+import com.levi9.hack9.reference.api.model.Report;
+import com.levi9.hack9.reference.api.model.ReportInvoiceItem;
 import com.levi9.hack9.reference2019.service.FinancialService;
 
 /**
@@ -96,6 +98,7 @@ public class FinancialServiceDbImpl implements FinancialService {
 	}
 	
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Invoice> getInvoice(String id) {
 		final String sql = "SELECT * FROM Invoices WHERE id = :id";
 		MapSqlParameterSource parameters = new MapSqlParameterSource("id", id);
@@ -109,6 +112,28 @@ public class FinancialServiceDbImpl implements FinancialService {
 							.start(TimeUtil.convert(rs.getTimestamp("start")))
 							.sum(rs.getFloat("sum")))
 					: Optional.empty();
+		});
+	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public Report getReport(String caller) {
+		final String invoicesSql = "SELECT * FROM Invoices WHERE calling = :caller";
+		final String unInvoicedSql = "SELECT SUM(cost) as uninvoiced, COUNT(*) FROM Calls WHERE invoice_id IS NULL and caller = :caller";
+		
+		MapSqlParameterSource parameter = new MapSqlParameterSource("caller", caller);
+		final List<ReportInvoiceItem> invoices = jdbc.query(invoicesSql, parameter, (rs, rowNum) -> {
+			return new ReportInvoiceItem()
+					.id(rs.getString("id"))
+					.sum(rs.getFloat("sum"));
+		});
+		return jdbc.query(unInvoicedSql, parameter, rs -> {
+			return rs.next() ?
+					new Report()
+						.calling(caller)
+						.invoices(invoices)
+						.remaining(rs.getFloat("uninvoiced"))
+					: new Report().calling(caller);
 		});
 	}
 }

@@ -266,10 +266,11 @@ components:
           format: int32
           description: "Call duration, in seconds"
       required:
+        - calling
         - caller
-        - number
         - start
         - duration
+        
     CallCost:
       type: object
       properties:
@@ -401,17 +402,30 @@ components:
         invoices:
           type: array
           items:
-            properties:
-              id:
-                type: string
-                description: "Invoice ID"
-              sum:
-                type: number
-                format: float
+            $ref: "#/components/schemas/ReportInvoiceItem"
         remaining:
           type: number
           format: float
+      required:
+        - calling
+        - invoices
+        - remaining
         
+    ReportInvoiceItem:
+      description: "One invoice related item in the report"
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Invoice ID"
+        sum:
+          type: number
+          format: float
+          description: "Sum on the invoice"
+      required:
+        - id
+        - sum
+          
     Listing:
       description: "Status of the report being generated, with location, if done."
       type: object
@@ -426,4 +440,3 @@ components:
       required:
         - calling
         - calls
-

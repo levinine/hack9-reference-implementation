@@ -16,6 +16,7 @@ import org.springframework.web.context.request.NativeWebRequest;
 import com.levi9.hack9.reference.api.FinancialApiController;
 import com.levi9.hack9.reference.api.model.Invoice;
 import com.levi9.hack9.reference.api.model.InvoiceRequest;
+import com.levi9.hack9.reference.api.model.Report;
 import com.levi9.hack9.reference2019.service.FinancialService;
 
 /**
@@ -43,5 +44,10 @@ public class FinancialController extends FinancialApiController {
 	@Override
 	public ResponseEntity<Invoice> getInvoice(@PathVariable("id") String id) {
 		return ResponseEntity.of(service.getInvoice(id));
+	}
+	
+	@Override
+	public ResponseEntity<Report> getReport(@PathVariable("calling") String calling) {
+		return ResponseEntity.ok(service.getReport(calling));
 	}
 }

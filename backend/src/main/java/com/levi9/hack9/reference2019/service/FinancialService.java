@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.levi9.hack9.reference.api.model.Invoice;
 import com.levi9.hack9.reference.api.model.InvoiceRequest;
+import com.levi9.hack9.reference.api.model.Report;
 
 /**
  * Financial services.
@@ -27,4 +28,12 @@ public interface FinancialService {
 	 * @return
 	 */
 	Optional<Invoice> getInvoice(String id);
+	/**
+	 * Get the financial report on the caller. The report will list
+	 * all invoices and the un-invoiced amount.
+	 * 
+	 * @param caller telephone number for which to get the report
+	 * @return Report on the calling numbers financial status.
+	 */
+	Report getReport(String caller);
 }
