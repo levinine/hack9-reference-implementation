@@ -360,6 +360,9 @@ components:
       description: "One item in the invoice, related to one telephone number"
       type: object
       properties:
+        id:
+          type: string
+          description: "Invoice ID, usually ${master_id}-${telephone}"
         calling:
           type: string
           format: telephone
@@ -381,7 +384,8 @@ components:
           format: int32
           description: "Number of calls made during the invoicing period."
       required:
-        - number
+        - id
+        - calling
         - start
         - end
         - sum
