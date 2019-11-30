@@ -6,6 +6,7 @@ package com.levi9.hack9.reference2019.service.impl;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -92,5 +93,22 @@ public class FinancialServiceDbImpl implements FinancialService {
 			return parameters;
 		}).toArray(SqlParameterSource[]::new);
 		jdbc.batchUpdate(CREATE_INVOICES, parametersBatch);
+	}
+	
+	@Override
+	public Optional<Invoice> getInvoice(String id) {
+		final String sql = "SELECT * FROM Invoices WHERE id = :id";
+		MapSqlParameterSource parameters = new MapSqlParameterSource("id", id);
+		return jdbc.query(sql, parameters, rs -> {
+			return rs.next() ?
+					Optional.of(new Invoice()
+							.calling(rs.getString("calling"))
+							.count(rs.getInt("count"))
+							.end(TimeUtil.convert(rs.getTimestamp("end")))
+							.id(rs.getString("id"))
+							.start(TimeUtil.convert(rs.getTimestamp("start")))
+							.sum(rs.getFloat("sum")))
+					: Optional.empty();
+		});
 	}
 }

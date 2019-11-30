@@ -1,10 +1,9 @@
-/**
- * 
+/*
+ * Copyright Levi Nine, 2019
  */
 package com.levi9.hack9.reference2019.rest;
 
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.Instant;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
@@ -23,7 +22,6 @@ import com.levi9.hack9.reference.api.SwitchboardApiController;
 import com.levi9.hack9.reference.api.model.Call;
 import com.levi9.hack9.reference.api.model.CallCost;
 import com.levi9.hack9.reference.api.model.Price;
-import com.levi9.hack9.reference2019.config.PriceInterval;
 import com.levi9.hack9.reference2019.service.CallService;
 import com.levi9.hack9.reference2019.service.PriceService;
 
@@ -47,25 +45,21 @@ public class SwitchboardController extends SwitchboardApiController {
     		@NotNull @Valid @RequestParam(value = "number", required = true) String number,
     		@NotNull @Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime time) {
 		final Instant callTime = time.toInstant();
-		//final PriceInterval price = priceResolver.resolve(number, callTime).get();
-		return priceResolver.resolve(number, callTime)
-			.map(price -> {
-				final Price response = new Price();
-				response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
-				response.setPrefix(price.prefix);
-				response.setPrice(price.price);
-				response.setInitial(BigDecimal.valueOf(price.initial));
-				response.setIncrement(BigDecimal.valueOf(price.increment));
-				return response;
-			})
-			.map(ResponseEntity::ok)
-			.orElse(ResponseEntity.notFound().build());
+		return ResponseEntity.of(
+				priceResolver.resolve(number, callTime)
+				.map(price -> {
+					final Price response = new Price();
+					response.setFrom(price.start.atOffset(ZoneOffset.ofHours(0)));
+					response.setPrefix(price.prefix);
+					response.setPrice(price.price);
+					response.setInitial(BigDecimal.valueOf(price.initial));
+					response.setIncrement(BigDecimal.valueOf(price.increment));
+					return response;
+				}));
     }
 	
 	@Override
 	public ResponseEntity<CallCost> registerCall(@Valid @RequestBody Call call) {
-		return callService.registerCall(call)
-				.map(ResponseEntity::ok)
-				.orElseGet(() -> ResponseEntity.notFound().build());
+		return ResponseEntity.of(callService.registerCall(call));
 	}
 }

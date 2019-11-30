@@ -6,8 +6,6 @@ package com.levi9.hack9.reference2019.service.impl;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -120,7 +118,7 @@ public class CallServiceDbImpl implements CallService {
 			final CallCost callCost = new CallCost()
 					.calling(caller)
 					.called(rs.getString("called"))
-					.start(OffsetDateTime.ofInstant(Instant.ofEpochMilli(rs.getTimestamp("started").getTime()), ZoneId.of("UTC")))
+					.start(TimeUtil.convert(rs.getTimestamp("started")))
 					.duration(rs.getInt("duration"))
 					.cost(rs.getFloat("cost"))
 					.price(rs.getFloat("price"));
