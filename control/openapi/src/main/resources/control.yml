@@ -1,0 +1,130 @@
+openapi: "3.0.0"
+info:
+  version: 1.0.0
+  title: "Control server API"
+  description: "Control server where instances register themselves and call callbacks."
+  contact:
+    name: "Dragan Gajic"
+    email: "d.gajic@levi9.com"
+  license:
+    name: MIT
+    url: "https://"
+servers:
+  - url: https://hack9.levi9.com/reference
+paths:
+  /register:
+    post:
+      summary: "Register a team"
+      description: "Register a team and their solution that will be monitored by the judge"
+      operationId: register
+      tags:
+        - register
+      requestBody:
+        description: "Registartion object, most notably: team name and server URL."
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Register"
+        required: true
+      responses:
+        201:
+          description: "Registration created."
+        400:
+          description: "Bad format of team name or URL"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        404:
+          description: "Unable to contact server on the given URL"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        
+  /callback/invoices:
+    post:
+      summary: "Report on generated invoices"
+      description: "This is a callback URL for reporting finished generation of invoices."
+      operationId: callbackInvoices
+      tags:
+        - callbacks
+      requestBody:
+        description: "A list of individual invoices, for each telephone number."
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/Invoices"
+      responses:
+        204:
+          description: "Invoice submission received."
+      
+components:
+  schemas:
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+          description: "Error message"
+          example: "Your data is missing a URL"
+    
+    Register:
+      description: "Registration of a team."
+      type: object
+      properties:
+        team:
+          type: string
+          description: "Team name"
+          example: "The Blue dot"
+        url:
+          type: string
+          format: url
+          description: "URL of the service to be registered"
+          example: "http://ec2-52-204-122-132.compute-1.amazonaws.com/phone"
+      
+    Invoice:
+      description: "Invoice item in invoice callback submission."
+      type: object
+      properties:
+        id:
+          type: string
+          description: "Invoice ID"
+          example: "INV_2019-01-04_38121123456"
+        calling:
+          type: string
+          format: telephone
+          description: "Telephone number for which the invoice is generated."
+          example: "381211234567"
+        sum:
+          type: number
+          format: float
+          description: "Sum to be charged to the user."
+          example: "238.21"
+        count:
+          type: number
+          format: int32
+          description: "Number of calls made during the invoicing period."
+          example: "392"
+      required:
+        - id
+        - calling
+        - sum
+        - count
+        
+    Invoices:
+      description: "Report successful completion of an invoice generation to callback URL"
+      type: object
+      properties:
+        master_id:
+          type: string
+          description: "Master invoice ID"
+          example: "INV_2019-01-04"
+        invoices:
+          type: array
+          items:
+            $ref: "#/components/schemas/Invoice"
+      required:
+        - invoices
+    
