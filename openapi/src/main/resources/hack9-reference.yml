@@ -32,13 +32,15 @@ paths:
           schema:
             type: string
             format: telephone
-          description: "Telephone number to call, for which the call price should be calculated." 
+          description: "Telephone number to call, for which the call price should be calculated."
+          example: "38121123456"
         - name: time
           in: query
           schema:
             type: string
             format: date-time
           description: "date and time of the call, in RFC-3339 format, section 5.6. If ommitted, default value is NOW."
+          example: "2019-04-03T12:34:56.00Z"
       responses:
         200:
           description: "Price of a call, per second"
@@ -116,6 +118,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
+      callbacks:
+        invoicingDone:
+          '{$request.body#/callback}':
+            post:
+              requestBody:
+                description: "Invoice report to submit to control server."
+                content:
+                  application/json:
+                    schema:
+                      $ref: "#/components/schemas/Invoices"
+              responses:
+                204:
+                  description: "Invoice report accepted"
               
   /financial/invoice/{id}:
     get:
@@ -127,6 +142,7 @@ paths:
           in: path
           required: true
           description: "Invoice ID"
+          example: "INV_2019-03-02_38121123456"
           schema:
             type: string
       tags:
@@ -160,6 +176,7 @@ paths:
           required: true
           in: path
           description: "Calling number"
+          example: "38121123456"
       responses:
         200:
           description: "Report status"
@@ -176,25 +193,31 @@ paths:
 
   /listing/{calling}:
     get:
-      summary: ""
-      description: ""
+      summary: "Listing of calls"
+      description: "Listing of calls made by the given telephone number"
       operationId: listing
       tags:
         - call
       parameters:
         - name: calling
+          description: "The calling number for which to list calls"
+          example: "38121123456"
           in: path
           required: true
           schema:
             type: string
             format: telephone
         - name: from
+          description: "Start of the listing period."
+          example: "2019-01-01T00:00:00.00Z"
           in: query
           required: true
           schema:
             type: string
             format: date-time
         - name: to
+          description: "End of listing period."
+          example: "2019-05-31T23:59:59.99Z"
           in: query
           required: true
           schema:
@@ -202,7 +225,7 @@ paths:
             format: date-time
       responses:
         200:
-          description: ""
+          description: "Listing generated, even if empty."
           content:
             application/json:
               schema:
@@ -223,23 +246,28 @@ components:
       properties:
         prefix:
           type: string
-          description: "Telephone number prefix this price is for. for instance '381 21'"
+          description: "Telephone number prefix this price is for."
+          example: "381 21"
         price:
           type: number
           format: float
           description: "Price of a phone call, per minute."
+          example: "1.2"
         from:
           type: string
           format: date-time
           description: "Effective date from which this price is valid."
+          example: "2019-01-01T00:00:00.00Z"
         initial:
           type: number
           format: int32
           description: "Initial number of seconds for the esablishing the call."
+          example: "10"
         increment:
           type: number
           format: int32
           description: "Number of seconds for the call duration rounding."
+          example: "5"
       required:
         - prefix
         - price
@@ -254,17 +282,21 @@ components:
           type: string
           format: telephone
           description: "Caller number, list of digits, cannot start with 0."
+          example: "381211234567"
         called:
           type: string
           description: "Number being called."
+          example: "38164111222333"
         start:
           type: string
           format: date-time
           description: "Start time of the call"
+          example: "2019-05-23T21:03:33.30Z"
         duration:
           type: integer
           format: int32
           description: "Call duration, in seconds"
+          example: "450"
       required:
         - calling
         - caller
@@ -278,30 +310,37 @@ components:
           type: string
           format: telephone
           description: "Caller phone number"
+          example: "381211234567"
         called:
           type: string
           format: telephone
           description: "Number that was dialed"
+          example: "38164111222333"
         start:
           type: string
           format: date-time
           description: "Start time of the call"
+          example: "2019-05-23T21:03:33.30Z"
         duration:
           type: integer
           format: int32
           description: "Call duration, in seconds"
+          example: "350"
         rounded:
           type: integer
           format: int32
           description: "Call duration, in seconds, with initial, rounded to increment."
+          example: "355"
         price:
           type: number
           format: float
           description: "Price of the call per minute, used to calculate the cost."
+          example: "0.4"
         cost:
           type: number
           format: float
-          description: "Cost of the call that was made"
+          description: "Cost of the call that was made."
+          example: "2.367"
       required:
         - cost
         - calling
@@ -317,14 +356,17 @@ components:
           type: string
           format: date-time
           description: "Start of the invoicing period."
+          example: "2019-05-01T00:00:00.00Z"
         end:
           type: string
           format: date-time
           description: "End of the invoicing period"
+          example: "2019-05-31T23:59:59.99Z"
         callback:
           description: "Callback URL to signal invoice completion. Callback expects a JSON of InvoiceDone"
           type: string
           format: url
+          example: "http://judge-thread.hack9.levi9.com/report/invoice"
       required:
         - start
         - end
@@ -333,57 +375,50 @@ components:
       description: "Report successful completion of an invoice to callback URL"
       type: object
       properties:
+        master_id:
+          type: string
+          description: "Optional master ID of invoices."
+          example: "INV_2019-05-01"
         invoices:
           type: array
           items:
-            properties:
-              id:
-                type: string
-                description: ""
-              calling:
-                type: string
-                format: telephone
-                description: ""
-              sum:
-                type: number
-                format: float
-              count:
-                type: number
-                format: int64
-            required:
-              - id
-              - calling
-              - sum
-              - count
+            $ref: "#/components/schemas/Invoice"
       required:
         - invoices
+        
     Invoice:
       description: "One item in the invoice, related to one telephone number"
       type: object
       properties:
         id:
           type: string
-          description: "Invoice ID, usually ${master_id}-${telephone}"
+          description: "Invoice ID"
+          example: "INV_2019-05-01_38121123456"
         calling:
           type: string
           format: telephone
           description: "Telephone number for which the invoice is created"
+          example: "381211234567"
         start:
           type: string
           format: date-time
           description: "Start period of the invoice."
+          example: "2019-01-01T00:00:00.00Z"
         end:
           type: string
           format: date-time
           description: "End period of the invoice."
+          example: "2019-01-31T23:59:59.99Z"
         sum:
           type: number
           format: float
           description: "Amount to be payed for the invoice"
+          example: "1341.33"
         count:
           type: integer
           format: int32
           description: "Number of calls made during the invoicing period."
+          example: "2319"
       required:
         - id
         - calling
@@ -399,6 +434,8 @@ components:
         calling:
           type: string
           format: telephone
+          description: "The number for which to generate the report."
+          example: "381211234567"
         invoices:
           type: array
           items:
@@ -406,6 +443,8 @@ components:
         remaining:
           type: number
           format: float
+          description: "The sum of cost of un-invoiced calls for the gien number."
+          example: "34.23"
       required:
         - calling
         - invoices
@@ -418,10 +457,12 @@ components:
         id:
           type: string
           description: "Invoice ID"
+          example: "INV_2019-04-01_38121123456"
         sum:
           type: number
           format: float
           description: "Sum on the invoice"
+          example: "231.22"
       required:
         - id
         - sum
@@ -433,6 +474,8 @@ components:
         calling:
           type: string
           format: telephone
+          description: "The phone/client we generate the listing for."
+          example: "381211234567"
         calls:
           type: array
           items:
