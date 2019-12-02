@@ -14,9 +14,11 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 import com.levi9.hack9.reference.api.model.Invoice;
 import com.levi9.hack9.reference.api.model.InvoiceRequest;
+import com.levi9.hack9.reference.api.model.Invoices;
 import com.levi9.hack9.reference.api.model.Report;
 import com.levi9.hack9.reference.api.model.ReportInvoiceItem;
 import com.levi9.hack9.reference2019.service.FinancialService;
@@ -30,6 +32,8 @@ import com.levi9.hack9.reference2019.service.FinancialService;
 public class FinancialServiceDbImpl implements FinancialService {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
+	@Autowired
+	RestTemplate rest;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -38,7 +42,9 @@ public class FinancialServiceDbImpl implements FinancialService {
 		final Instant start = request.getStart().toInstant();
 		final Instant end = request.getEnd().toInstant();
 		markInvoices(masterId, start, end);
-		insertInvoices(sumUpInvoices(masterId, start, end), masterId);
+		final List<Invoice> invoices = sumUpInvoices(masterId, start, end);
+		insertInvoices(invoices, masterId);
+		callback(request, masterId.toString(), invoices);
 	}
 	
 	private Long getInvoiceMasterId() {
@@ -97,6 +103,11 @@ public class FinancialServiceDbImpl implements FinancialService {
 		jdbc.batchUpdate(CREATE_INVOICES, parametersBatch);
 	}
 	
+	private void callback(InvoiceRequest request, String masterId, List<Invoice> invoices) {
+		final Invoices report = new Invoices().masterId(masterId).invoices(invoices);
+		rest.postForEntity(request.getCallback(), report, Void.class);
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public Optional<Invoice> getInvoice(String id) {
