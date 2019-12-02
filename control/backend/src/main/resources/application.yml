@@ -1,0 +1,18 @@
+management:
+  endpoint:
+    info:
+      enabled: true
+    mappings:
+      enabled: true
+  endpoints:
+    web:
+      base-path: /management
+      exposure:
+        include:
+        - info
+        - mappings
+
+server:
+  port: 8090
+#  servlet:
+#    context-path: /judge-thread

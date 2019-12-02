@@ -42,11 +42,19 @@ paths:
               schema:
                 $ref: "#/components/schemas/Error"
         
-  /callback/invoices:
+  /callback/invoices/{token}:
     post:
       summary: "Report on generated invoices"
       description: "This is a callback URL for reporting finished generation of invoices."
       operationId: callbackInvoices
+      parameters:
+        - name: token
+          in: path
+          schema:
+            type: string
+            format: uuid
+          description: "Token identifying response to invoice request"
+          example: "1234-112233-123456654321"
       tags:
         - callbacks
       requestBody:

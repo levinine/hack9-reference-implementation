@@ -366,7 +366,7 @@ components:
           description: "Callback URL to signal invoice completion. Callback expects a JSON of InvoiceDone"
           type: string
           format: url
-          example: "http://judge-thread.hack9.levi9.com/report/invoice"
+          example: "http://judge-thread.hack9.levi9.com/report/invoice/g1y67aeega12384"
       required:
         - start
         - end
