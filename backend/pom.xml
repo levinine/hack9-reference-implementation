@@ -12,7 +12,7 @@
 	<artifactId>backend</artifactId>
 	<packaging>jar</packaging>
 
-	<name>hack9-reference-2019</name>
+	<name>hack9-reference-backend</name>
 	<url>https://hack9.levi9.com</url>
 
 	<properties>
