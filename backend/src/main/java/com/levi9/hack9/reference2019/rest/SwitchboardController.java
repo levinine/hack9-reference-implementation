@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.NativeWebRequest;
 
-import com.levi9.hack9.reference.api.SwitchboardApiController;
+import com.levi9.hack9.reference.api.SwitchApiController;
 import com.levi9.hack9.reference.api.model.Call;
 import com.levi9.hack9.reference.api.model.CallCost;
 import com.levi9.hack9.reference.api.model.Price;
@@ -30,7 +30,7 @@ import com.levi9.hack9.reference2019.service.PriceService;
  *
  */
 @RestController
-public class SwitchboardController extends SwitchboardApiController {
+public class SwitchboardController extends SwitchApiController {
 	private PriceService priceResolver;
 	private CallService callService;
 	

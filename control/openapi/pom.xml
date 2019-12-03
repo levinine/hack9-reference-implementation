@@ -12,7 +12,7 @@
 	<artifactId>control-api</artifactId>
 	<packaging>jar</packaging>
 
-	<name>hack9-reference-2019</name>
+	<name>hack9-control-api</name>
 	<url>https://hack9.levi9.com</url>
 
 	<properties>
@@ -24,12 +24,6 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
-<!-- 		<dependency> -->
-<!-- 			<groupId>io.swagger.core.v3</groupId> -->
-<!-- 			<artifactId>swagger-annotations</artifactId> -->
-<!-- 			<version>2.0.8</version> -->
-<!-- 		</dependency> -->
 		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
 		<dependency>
 			<groupId>io.swagger</groupId>
@@ -48,15 +42,12 @@
 			<artifactId>springfox-swagger2</artifactId>
 			<version>2.9.2</version>
 		</dependency>
-		
-		
         
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
         </dependency>
-		
 	</dependencies>
 	<build>
 		<plugins>

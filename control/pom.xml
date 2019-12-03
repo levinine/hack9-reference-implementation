@@ -8,12 +8,10 @@
 		<version>0.0.1-SNAPSHOT</version>
 	</parent>
 
-	<groupId>com.levi9.hack9.reference2019</groupId>
 	<artifactId>control</artifactId>	
-	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
-	<name>hack9-reference-2019</name>
+	<name>hack9-control-parent</name>
 	<url>https://hack9.levi9.com</url>
 
 	<properties>
