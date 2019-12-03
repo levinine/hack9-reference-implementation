@@ -45,5 +45,6 @@
 	<modules>
 		<module>openapi</module>
 		<module>backend</module>
-    </modules>
+		<module>control</module>
+	</modules>
 </project>

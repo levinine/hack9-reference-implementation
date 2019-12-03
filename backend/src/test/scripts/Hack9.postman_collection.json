@@ -1,0 +1,319 @@
+{
+	"info": {
+		"_postman_id": "c0f7eac8-de08-4cee-aa94-655e0bbdf54d",
+		"name": "Hack9",
+		"description": "Hack9 reference implementation.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Reset",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reference/reset",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reference",
+						"reset"
+					]
+				},
+				"description": "Reset application"
+			},
+			"response": []
+		},
+		{
+			"name": "Get price",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reference/switchboard/price?number={{dial1_afganistan}}&time=2019-03-01T00:00:00.00Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reference",
+						"switchboard",
+						"price"
+					],
+					"query": [
+						{
+							"key": "number",
+							"value": "{{dial1_afganistan}}",
+							"description": "Afganistan"
+						},
+						{
+							"key": "time",
+							"value": "2019-03-01T00:00:00.00Z"
+						}
+					]
+				},
+				"description": "Get call price."
+			},
+			"response": []
+		},
+		{
+			"name": "Register call Afganistan",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial1_afganistan}}\",\n  \"start\": \"2019-02-01T12:34:22.00Z\",\n  \"duration\": 450\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/reference/switchboard/call",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reference",
+						"switchboard",
+						"call"
+					]
+				},
+				"description": "Register a call being made"
+			},
+			"response": []
+		},
+		{
+			"name": "Register call Albania",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial2_albania}}\",\n  \"start\": \"2019-02-05T12:34:22.00Z\",\n  \"duration\": 400\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/reference/switchboard/call",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reference",
+						"switchboard",
+						"call"
+					]
+				},
+				"description": "Call a number in Albania"
+			},
+			"response": []
+		},
+		{
+			"name": "Register call Angola",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial3_argentina}}\",\n  \"start\": \"2019-02-10T12:34:22.00Z\",\n  \"duration\": 800\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/reference/switchboard/call",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reference",
+						"switchboard",
+						"call"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Listing",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/reference/listing/{{caller}}?from=2019-01-01T00:00:00.00Z&to=2019-05-31T23:59:59.99Z",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"reference",
+						"listing",
+						"{{caller}}"
+					],
+					"query": [
+						{
+							"key": "from",
+							"value": "2019-01-01T00:00:00.00Z"
+						},
+						{
+							"key": "to",
+							"value": "2019-05-31T23:59:59.99Z"
+						}
+					]
+				},
+				"description": "Get listing."
+			},
+			"response": []
+		},
+		{
+			"name": "Invoice request",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"start\": \"2019-01-01T00:00:00.00Z\",\n\t\"end\": \"2019-05-31T23:59:59.99Z\",\n\t\"callback\": \"{{control_url}}/callback/invoices/{{invoice_token}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/financial/invoice",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"financial",
+						"invoice"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get invoice",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/financial/invoice/1-{{caller}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"financial",
+						"invoice",
+						"1-{{caller}}"
+					]
+				},
+				"description": "Get the first invoice"
+			},
+			"response": []
+		},
+		{
+			"name": "Get report",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/financial/report/{{caller}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"financial",
+						"report",
+						"{{caller}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Control - Invoices",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"master_id\": \"INV_2019-05-01\",\n  \"invoices\": [\n    {\n      \"id\": \"INV_2019-05-01_38121123456\",\n      \"calling\": \"381211234567\",\n      \"start\": \"2019-01-01T00:00:00.00Z\",\n      \"end\": \"2019-01-31T23:59:59.99Z\",\n      \"sum\": \"1341.33\",\n      \"count\": \"2319\"\n    }\n  ]\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{control_url}}/callback/invoices/{{invoice_token}}",
+					"host": [
+						"{{control_url}}"
+					],
+					"path": [
+						"callback",
+						"invoices",
+						"{{invoice_token}}"
+					]
+				},
+				"description": "Submit invoices to control server"
+			},
+			"response": []
+		}
+	],
+	"protocolProfileBehavior": {}
+}

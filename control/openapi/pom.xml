@@ -1,0 +1,118 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	
+	<parent>
+        <groupId>com.levi9.hack9.reference2019</groupId>
+        <artifactId>control</artifactId>
+        <version>0.0.1-SNAPSHOT</version>
+		<relativePath>..</relativePath>
+    </parent>
+
+	<artifactId>control-api</artifactId>
+	<packaging>jar</packaging>
+
+	<name>hack9-reference-2019</name>
+	<url>https://hack9.levi9.com</url>
+
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+	<dependencies>
+		<dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+        <!-- https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations -->
+<!-- 		<dependency> -->
+<!-- 			<groupId>io.swagger.core.v3</groupId> -->
+<!-- 			<artifactId>swagger-annotations</artifactId> -->
+<!-- 			<version>2.0.8</version> -->
+<!-- 		</dependency> -->
+		<!-- https://mvnrepository.com/artifact/io.swagger/swagger-annotations -->
+		<dependency>
+			<groupId>io.swagger</groupId>
+			<artifactId>swagger-annotations</artifactId>
+			<version>1.5.24</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openapitools/jackson-databind-nullable -->
+		<dependency>
+			<groupId>org.openapitools</groupId>
+			<artifactId>jackson-databind-nullable</artifactId>
+			<version>0.2.0</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/io.springfox/springfox-swagger2 -->
+		<dependency>
+			<groupId>io.springfox</groupId>
+			<artifactId>springfox-swagger2</artifactId>
+			<version>2.9.2</version>
+		</dependency>
+		
+		
+        
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+		
+	</dependencies>
+	<build>
+		<plugins>
+			<!-- https://mvnrepository.com/artifact/io.swagger.codegen.v3/swagger-codegen-maven-plugin -->
+<!-- 			<plugin> -->
+<!-- 				<groupId>io.swagger.codegen.v3</groupId> -->
+<!-- 				<artifactId>swagger-codegen-maven-plugin</artifactId> -->
+<!-- 				<version>3.0.13</version> -->
+<!-- 				<executions> -->
+<!-- 					<execution> -->
+<!-- 						<id>spring-boot-api</id> -->
+<!-- 						<goals> -->
+<!-- 							<goal>generate</goal> -->
+<!-- 						</goals> -->
+<!-- 						<configuration> -->
+<!-- 							<inputSpec>${project.basedir}/src/main/resources/hack9-reference.yml</inputSpec> -->
+<!-- 							<generatorName>spring</generatorName> -->
+<!-- 							<configOptions> -->
+<!-- 								<dateLibrary>java8</dateLibrary> -->
+<!-- 								<java8>true</java8> -->
+<!-- 							</configOptions> -->
+<!-- 							<language>spring</language> -->
+<!-- 							<library>spring-boot</library> -->
+<!-- 							<apiPackage>com.levi9.hack9.reference.api</apiPackage> -->
+<!-- 							<modelPackage>com.levi9.hack9.reference.api.model</modelPackage> -->
+<!-- 							<invokerPackage>com.levi9.hack9.reference.api.handler</invokerPackage> -->
+<!-- 						</configuration> -->
+<!-- 					</execution> -->
+<!-- 				</executions> -->
+<!-- 			</plugin> -->
+			
+			<plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>4.2.0</version>
+                <executions>
+                    <execution>
+                        <id>spring-boot-api</id>
+                        <goals>
+                            <goal>generate</goal>
+                        </goals>
+                        <configuration>
+                            <inputSpec>${project.basedir}/src/main/resources/control.yml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <configOptions>
+                                <dateLibrary>java8</dateLibrary>
+                                <java8>true</java8>
+                            </configOptions>
+                            <library>spring-boot</library>
+                            <apiPackage>com.levi9.hack9.reference.control.api</apiPackage>
+                            <modelPackage>com.levi9.hack9.reference.control.api.model</modelPackage>
+                            <invokerPackage>com.levi9.hack9.reference.control.api.handler</invokerPackage>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+    </build>
+</project>
