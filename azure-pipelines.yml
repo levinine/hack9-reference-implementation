@@ -34,6 +34,6 @@ steps:
 - task: PublishBuildArtifacts@1
   inputs:
     PathtoPublish: '/home/vsts/work/1/s/backend/target/'
-    ArtifactName: 'hack9'
+    ArtifactName: 'hack9-backend'
     publishLocation: 'Container'
     
