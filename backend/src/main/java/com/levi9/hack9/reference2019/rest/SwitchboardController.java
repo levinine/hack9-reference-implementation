@@ -43,8 +43,8 @@ public class SwitchboardController extends SwitchApiController {
 	@Override
     public ResponseEntity<Price> getPrice(
     		@NotNull @Valid @RequestParam(value = "number", required = true) String number,
-    		@NotNull @Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime time) {
-		final Instant callTime = time.toInstant();
+    		@Valid @RequestParam(value = "time", required = true) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) OffsetDateTime time) {
+		final Instant callTime = (time == null) ? Instant.now() : time.toInstant();
 		return ResponseEntity.of(
 				priceResolver.resolve(number, callTime)
 				.map(price -> {

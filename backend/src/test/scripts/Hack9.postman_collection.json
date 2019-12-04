@@ -33,7 +33,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/reference/switchboard/price?number={{dial1_afganistan}}&time=2019-03-01T00:00:00.00Z",
+					"raw": "http://localhost:8080/reference/switch/price?number={{dial1_afganistan}}&time=2019-03-01T00:00:00.00Z",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -41,7 +41,7 @@
 					"port": "8080",
 					"path": [
 						"reference",
-						"switchboard",
+						"switch",
 						"price"
 					],
 					"query": [
@@ -82,7 +82,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/reference/switchboard/call",
+					"raw": "http://localhost:8080/reference/switch/call",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -90,7 +90,7 @@
 					"port": "8080",
 					"path": [
 						"reference",
-						"switchboard",
+						"switch",
 						"call"
 					]
 				},
@@ -120,7 +120,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/reference/switchboard/call",
+					"raw": "http://localhost:8080/reference/switch/call",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -128,7 +128,7 @@
 					"port": "8080",
 					"path": [
 						"reference",
-						"switchboard",
+						"switch",
 						"call"
 					]
 				},
@@ -158,7 +158,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/reference/switchboard/call",
+					"raw": "http://localhost:8080/reference/switch/call",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -166,7 +166,7 @@
 					"port": "8080",
 					"path": [
 						"reference",
-						"switchboard",
+						"switch",
 						"call"
 					]
 				}
