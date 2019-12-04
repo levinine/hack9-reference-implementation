@@ -31,4 +31,9 @@ steps:
 - task: CmdLine@2
   inputs:
     script: 'netstat -ntpl'
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'hack9'
+    publishLocation: 'Container'
     
