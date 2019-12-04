@@ -30,5 +30,5 @@ steps:
     packageForLinux: '/home/vsts/work/1/s/control/backend/target/control-backend-0.0.1-SNAPSHOT.jar'
 - task: CmdLine@2
   inputs:
-    script: 'ps aux | grep java'
+    script: 'netstat -ntpl'
     
