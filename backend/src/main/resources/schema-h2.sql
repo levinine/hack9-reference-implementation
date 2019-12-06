@@ -2,7 +2,7 @@
 CREATE TABLE IF NOT EXISTS Prices (
     id VARCHAR(60),
     country VARCHAR(50),
-    city VARCHAR(50),
+    city VARCHAR(100),
     prefix VARCHAR(50),
     valid_from TIMESTAMP,
     price DOUBLE,
