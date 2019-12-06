@@ -1,0 +1,11 @@
+#
+# Tandem launcher
+#
+version: "3.7"
+
+services:
+  hack9-ri:
+    image: "hack9-ri:latest"
+    ports:
+      - "8080:8080"
+      
