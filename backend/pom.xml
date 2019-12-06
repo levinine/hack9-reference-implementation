@@ -99,6 +99,7 @@
     
     <profiles>
     	<profile>
+    		<!-- This profile relies on Maven stored server credentials. See README file. -->
     		<id>docker</id>
     		<build>
     			<plugins>

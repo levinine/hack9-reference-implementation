@@ -1,6 +1,6 @@
 # Hack9 reference implementation
 
-## Building
+## Building application
 
 Position yourself in the root of the project (directory where you found this
 file) and run the following commands:
@@ -8,6 +8,8 @@ file) and run the following commands:
 ```shell
 mvn clean package
 ```
+
+### Building Docker image
 
 If you wish to build a Docker image out of the project, either use Docker CLI or
 run maven with docker profile.
@@ -17,6 +19,26 @@ run maven with docker profile.
 mvn -P docker package
 # Push to AWS Docker repo
 mvn -P docker install
+```
+
+Please note that, in order for the push to AWS ECR to work, you need to follow
+these steps:
+
+- Login to AWS console
+- Generate credentials for AWS CLI
+- Put credentials into `~/.aws/credentials`
+- Run: `aws ecr get-login --no-include-email --region eu-west-1`
+- Locate "username" and "password"
+- Put username and password into `~/.mv/settings.xml` under section "servers"
+
+```xml
+<servers>
+    <server>
+        <id>745008152238.dkr.ecr.eu-west-1.amazonaws.com</id>
+        <username>AWS</username>
+        <password>...a.huge.pile.of.chars...</password>
+    </server>
+</servers>
 ```
 
 ## Running the application
