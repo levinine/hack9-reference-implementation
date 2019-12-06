@@ -12,6 +12,8 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 import com.levi9.hack9.reference2019.config.PriceConfig;
 import com.levi9.hack9.reference2019.config.PriceInterval;
@@ -24,12 +26,13 @@ import com.levi9.hack9.reference2019.service.impl.InMemoryPriceResolver;
  */
 public class PriceServiceTest {
 	private PriceService resolver;
+	private final Resource csv = new ClassPathResource("prices.csv");
 	
 	@BeforeEach
 	public void setUp() throws IOException {
 		resolver = new InMemoryPriceResolver(
 				new PriceRegistryImpl(
-						new PriceConfig("src/test/resources/prices.csv")));
+						new PriceConfig(csv)));
 	}
 	
 	@Test

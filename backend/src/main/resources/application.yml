@@ -30,7 +30,7 @@ spring:
  
 hack9:
   configuration:
-    csv: "src/main/resources/Codes.csv"
+    csv: "classpath:Codes.csv"
     
 
   

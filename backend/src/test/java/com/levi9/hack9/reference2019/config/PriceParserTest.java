@@ -11,6 +11,8 @@ import java.util.Collection;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
  * Test CSV parsing of prices file.
@@ -19,13 +21,14 @@ import org.junit.jupiter.api.Test;
  */
 class PriceParserTest {
 	private PriceConfig priceParser;
+	private final Resource csv = new ClassPathResource("prices.csv");
 	
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@BeforeEach
 	void setUp() throws Exception {
-		priceParser = new PriceConfig("src/test/resources/prices.csv");
+		priceParser = new PriceConfig(csv);
 	}
 
 	/**
