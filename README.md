@@ -9,6 +9,16 @@ file) and run the following commands:
 mvn clean package
 ```
 
+If you wish to build a Docker image out of the project, either use Docker CLI or
+run maven with docker profile.
+
+```shell
+# Build image
+mvn -P docker package
+# Push to AWS Docker repo
+mvn -P docker install
+```
+
 ## Running the application
 
 Application consists of two components: the reference implementation and
@@ -36,6 +46,15 @@ cd control/backend
 java -jar target/control-backend-0.0.1-SNAPSHOT.jar
 ```
 
+### Running with Docker compose
+
+If you have built your Docker images, you can run them using Docker Compose.
+Position yourself in the root of the repository (parent project) and run:
+
+```shell
+docker-compose up
+```
+
 ## Accessing application
 
 Application is accessable on the base URL http://localhost:8080/reference/
@@ -44,3 +63,5 @@ For example on how to access it, see Postman JSON in `backend/src/test/scripts`.
 ## Stopping application
 
 Just press `Ctrl+C` (in both windows where you started reference and judge thread).
+Or, if you were using Docker Compose, just press Ctrl+C in the main window or use
+`docker-compose stop` from another terminal.
