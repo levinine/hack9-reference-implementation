@@ -11,6 +11,8 @@ import java.time.Instant;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 
 /**
  * Test price registry.
@@ -22,6 +24,7 @@ public class PriceRegistryTest {
 	private static final Instant FIRST_OF_SEP = Instant.parse("2019-09-01T00:00:00.00Z");
 	
 	private PriceRegistry registry;
+	private final Resource csv = new ClassPathResource("prices.csv");
 	
 	/**
 	 * Read prices from CSV file and insert them into the registry.
@@ -30,7 +33,7 @@ public class PriceRegistryTest {
 	 */
 	@BeforeEach
 	public void setUp() throws IOException {
-		final PriceConfig priceConfig = new PriceConfig("src/test/resources/prices.csv");
+		final PriceConfig priceConfig = new PriceConfig(csv);
 		registry = new PriceRegistryImpl(priceConfig);
 	}
 	

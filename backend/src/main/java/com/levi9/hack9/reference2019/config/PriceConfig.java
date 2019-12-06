@@ -3,8 +3,8 @@
  */
 package com.levi9.hack9.reference2019.config;
 
-import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.Reader;
 import java.time.Instant;
 import java.util.Collection;
@@ -14,6 +14,7 @@ import java.util.stream.StreamSupport;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 /**
@@ -23,15 +24,10 @@ import org.springframework.stereotype.Component;
  */
 @Component
 public class PriceConfig {
-	private final String csvFile;
+	private Resource csv;
 	
-	/**
-	 * Initialize.
-	 * 
-	 * @param csvFile location of CSV config file, relative to ${CWD}
-	 */
-	public PriceConfig(@Value("${hack9.configuration.csv}") final String csvFile) {
-		this.csvFile = csvFile;
+	public PriceConfig(@Value("${hack9.configuration.csv}") Resource csv) {
+		this.csv = csv;
 	}
 	
 	/**
@@ -41,7 +37,7 @@ public class PriceConfig {
 	 * @throws IOException in case of file not found or trouble reading.
 	 */
 	public Collection<Price> getPrices() throws IOException {
-		final Reader file = new FileReader(csvFile);
+		final Reader file = new InputStreamReader(csv.getInputStream());
 		final CSVParser records = CSVFormat.RFC4180.withHeader().parse(file);
 		return StreamSupport.stream(records.spliterator(), false)
 				.map(record -> {
