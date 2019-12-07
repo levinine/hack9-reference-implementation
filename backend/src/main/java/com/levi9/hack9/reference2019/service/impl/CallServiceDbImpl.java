@@ -112,8 +112,8 @@ public class CallServiceDbImpl implements CallService {
 				+ "WHERE c.caller = :caller AND started >= :from AND started <= :to";
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("caller", caller);
-		parameters.addValue("from", from);
-		parameters.addValue("to", to);
+		parameters.addValue("from", from.atOffset(ZoneOffset.ofHours(0)));
+		parameters.addValue("to", to.atOffset(ZoneOffset.ofHours(0)));
 		final List<CallCost> calls = jdbcTemplate.query(GET_LISTING, parameters, (ResultSet rs, int rowNum) -> {
 			final CallCost callCost = new CallCost()
 					.calling(caller)
