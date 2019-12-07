@@ -33,14 +33,11 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/reference/switch/price?number={{dial1_afganistan}}&time=2019-03-01T00:00:00.00Z",
-					"protocol": "http",
+					"raw": "{{base_url}}/switch/price?number={{dial1_afganistan}}&time=2019-07-02T00:00:00.00Z",
 					"host": [
-						"localhost"
+						"{{base_url}}"
 					],
-					"port": "8080",
 					"path": [
-						"reference",
 						"switch",
 						"price"
 					],
@@ -52,7 +49,7 @@
 						},
 						{
 							"key": "time",
-							"value": "2019-03-01T00:00:00.00Z"
+							"value": "2019-07-02T00:00:00.00Z"
 						}
 					]
 				},
@@ -74,7 +71,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial1_afganistan}}\",\n  \"start\": \"2019-02-01T12:34:22.00Z\",\n  \"duration\": 450\n}",
+					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial1_afganistan}}\",\n  \"start\": \"2019-07-02T00:00:00.00Z\",\n  \"duration\": 450\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -112,7 +109,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial2_albania}}\",\n  \"start\": \"2019-02-05T12:34:22.00Z\",\n  \"duration\": 400\n}",
+					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial2_albania}}\",\n  \"start\": \"2019-09-02T00:00:00.00Z\",\n  \"duration\": 400\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -150,7 +147,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial3_argentina}}\",\n  \"start\": \"2019-02-10T12:34:22.00Z\",\n  \"duration\": 800\n}",
+					"raw": "{\n  \"calling\": \"{{caller}}\",\n  \"called\": \"{{dial3_argentina}}\",\n  \"start\": \"2019-07-02T00:00:00.00Z\",\n  \"duration\": 800\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -179,7 +176,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/reference/listing/{{caller}}?from=2019-01-01T00:00:00.00Z&to=2019-05-31T23:59:59.99Z",
+					"raw": "http://localhost:8080/reference/listing/{{caller}}?from=2019-07-01T00:00:00.00Z&to=2019-08-01T00:00:00.00Z",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -193,11 +190,11 @@
 					"query": [
 						{
 							"key": "from",
-							"value": "2019-01-01T00:00:00.00Z"
+							"value": "2019-07-01T00:00:00.00Z"
 						},
 						{
 							"key": "to",
-							"value": "2019-05-31T23:59:59.99Z"
+							"value": "2019-08-01T00:00:00.00Z"
 						}
 					]
 				},
@@ -219,7 +216,7 @@
 				],
 				"body": {
 					"mode": "raw",
-					"raw": "{\n\t\"start\": \"2019-01-01T00:00:00.00Z\",\n\t\"end\": \"2019-05-31T23:59:59.99Z\",\n\t\"callback\": \"{{control_url}}/callback/invoices/{{invoice_token}}\"\n}",
+					"raw": "{\n\t\"start\": \"2019-07-01T00:00:00.00Z\",\n\t\"end\": \"2019-07-31T23:59:59.99Z\",\n\t\"callback\": \"{{control_url}}/callback/invoices/{{invoice_token}}\"\n}",
 					"options": {
 						"raw": {
 							"language": "json"

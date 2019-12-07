@@ -9,3 +9,8 @@ services:
     ports:
       - "8080:8080"
       
+  hack9-callback:
+    image: "levi9/hack9-callback:latest"
+    depends_on:
+      - hack9-ri   
+      
