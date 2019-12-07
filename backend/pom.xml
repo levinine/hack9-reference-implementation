@@ -96,5 +96,48 @@
 			</plugin>
 		</plugins>
     </build>
+    
+    <profiles>
+    	<profile>
+    		<!-- This profile relies on Maven stored server credentials. See README file. -->
+    		<id>docker</id>
+    		<build>
+    			<plugins>
+    				<plugin>
+    					<groupId>com.spotify</groupId>
+    					<artifactId>dockerfile-maven-plugin</artifactId>
+    					<version>1.4.13</version>
+    					<executions>
+    						<execution>
+    							<id>build</id>
+    							<phase>package</phase>
+    							<goals>
+    								<goal>build</goal>
+    							</goals>
+    							<configuration>
+    								<repository>levi9/hack9-ri</repository>
+    								<tag>latest</tag>
+    							</configuration>
+    						</execution>
+    						
+    						<execution>
+    							<id>publish</id>
+    							<phase>install</phase>
+    							<goals>
+    								<goal>tag</goal>
+    								<goal>push</goal>
+    							</goals>
+    							<configuration>
+    								<useMavenSettingsForAuth>true</useMavenSettingsForAuth>
+    								<repository>745008152238.dkr.ecr.eu-west-1.amazonaws.com/levi9/hack9-ri</repository>
+    								<tag>latest</tag>
+    							</configuration>
+    						</execution>
+    					</executions>
+    				</plugin>
+    			</plugins>
+    		</build>
+    	</profile>
+    </profiles>
 	
 </project>
