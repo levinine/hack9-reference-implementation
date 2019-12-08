@@ -13,15 +13,6 @@ management:
         - mappings
        
 spring:
-  datasource:
-    url: "jdbc:postgresql://localhost/hack9db"
-    username: hack9
-    password: haxx0r
-    initialization-mode: always
-    platform: pgsql
-  profiles:
-    active:
-    - db-postgres
   jackson:
     deserialization:
       use-big-decimal-for-floats: true
