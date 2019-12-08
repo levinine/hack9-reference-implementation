@@ -4,13 +4,36 @@
 version: "3.7"
 
 services:
+  #
+  # Hack9 Reference Implementation
+  #
   hack9-ri:
     image: "levi9/hack9-ri:latest"
+    command:
+      - "--spring.profiles.active=db-postgres"
+      - "--spring.datasource.url=jdbc:postgresql://pgsql/hack9db"
     ports:
       - "8080:8080"
-      
+    depends_on:
+      - pgsql
+     
+  # 
+  # Callback handler for invoices
+  #
   hack9-callback:
     image: "levi9/hack9-callback:latest"
     depends_on:
       - hack9-ri   
-      
+  
+  #  
+  # PostgreSQL 12.0 RDBMS
+  #
+  pgsql:
+    image: postgres:12-alpine
+    restart: always
+    environment:
+      POSTGRES_DB: hack9db
+      POSTGRES_USER: hack9
+      POSTGRESQL_PASSWORD: haxx0r
+    ports:
+      - "5432:5432"

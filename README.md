@@ -50,12 +50,20 @@ simulate it, as defined by OpenAPI YMLs, feel free to do so.
 
 ### Running reference implementation
 
-To run the application, position in "backend" forlder and from there rung
-Spring Boot application:
+To run the application, position in "backend" forlder and from there run
+Spring Boot application. You **must** provide the database profile to be
+used, one of:
+
+- db-h2
+- db-postgres
+
+You may also need to adjust JDBC URL to map to the correct DB. For instance:
 
 ```shell
 cd backend
-java -jar target/backend-0.0.1-SNAPSHOT.jar
+java -jar target/backend-0.0.1-SNAPSHOT.jar \
+    --spring.profiles.active=db-postgres \
+    --spring.datasource.url=jdbc:postgresql://pgsql/hack9db
 ```
 
 ### Running Skeleton Judge Thread
@@ -67,6 +75,12 @@ Judge Thread and run it.
 cd control/backend
 java -jar target/control-backend-0.0.1-SNAPSHOT.jar
 ```
+
+### Running with Docker
+
+All images have an entrypoint defined as `java -jar <path to Spring Boot JAR>`
+you can add in the command all additional parameters for the application. You
+**must** define the active profile, since there is no default.
 
 ### Running with Docker compose
 

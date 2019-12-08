@@ -4,10 +4,13 @@
 package com.levi9.hack9.reference2019.service.impl;
 
 import java.io.IOException;
+import java.time.ZoneOffset;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -24,6 +27,8 @@ import com.levi9.hack9.reference2019.service.ResetService;
  */
 @Service
 public class ResetServiceDbImpl implements ResetService {
+	private static final Logger LOG = LoggerFactory.getLogger(ResetServiceDbImpl.class);
+	
 	@Autowired
 	private JdbcTemplate jdbc;
 	@Autowired
@@ -57,15 +62,14 @@ public class ResetServiceDbImpl implements ResetService {
 					source.addValue("initial", price.initial);
 					source.addValue("prefix", price.prefix);
 					source.addValue("price", price.price);
-					source.addValue("start", price.start);
+					source.addValue("start", price.start.atOffset(ZoneOffset.ofHours(0)));
 					return source;
 				})
 				.collect(Collectors.toList()).toArray(new SqlParameterSource[0]);
 			template.batchUpdate(sqlInsert, parameters);
 		} catch (IOException e) {
-			
+			LOG.error("Error reading CSV prices.", e);
+			throw new RuntimeException("Error reading CSV file", e);
 		}
-		
 	}
-
 }

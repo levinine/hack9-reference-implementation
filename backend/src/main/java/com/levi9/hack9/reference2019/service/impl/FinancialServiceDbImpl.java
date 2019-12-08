@@ -22,6 +22,7 @@ import com.levi9.hack9.reference.api.model.Invoices;
 import com.levi9.hack9.reference.api.model.Report;
 import com.levi9.hack9.reference.api.model.ReportInvoiceItem;
 import com.levi9.hack9.reference2019.service.FinancialService;
+import com.levi9.hack9.reference2019.service.InvoiceIdService;
 
 /**
  * @author n.milutinovic
@@ -33,26 +34,20 @@ public class FinancialServiceDbImpl implements FinancialService {
 	@Autowired
 	private NamedParameterJdbcTemplate jdbc;
 	@Autowired
-	RestTemplate rest;
+	private RestTemplate rest;
+	@Autowired
+	private InvoiceIdService invoiceId;
 
 	@Override
 	@Transactional(readOnly = false)
 	public void createInvoices(InvoiceRequest request) {
-		Long masterId = getInvoiceMasterId();
+		Long masterId = invoiceId.getNextMasterId();
 		final Instant start = request.getStart().toInstant();
 		final Instant end = request.getEnd().toInstant();
 		markInvoices(masterId, start, end);
 		final List<Invoice> invoices = sumUpInvoices(masterId, start, end);
 		insertInvoices(invoices, masterId);
 		callback(request, masterId.toString(), invoices);
-	}
-	
-	private Long getInvoiceMasterId() {
-		final String GET_GLOBAL_ID = "SELECT invoice_id.nextval AS master_id";
-		return jdbc.query(GET_GLOBAL_ID, rs -> {
-			rs.next();
-			return rs.getLong("master_id");
-		});
 	}
 	
 	private void markInvoices(Long masterId, Instant start, Instant end) {
@@ -62,8 +57,8 @@ public class FinancialServiceDbImpl implements FinancialService {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("id", masterId.toString());
 		parameters.addValue("master_id", masterId);
-		parameters.addValue("start", start);
-		parameters.addValue("end",  end);
+		parameters.addValue("start", start.atOffset(ZoneOffset.ofHours(0)));
+		parameters.addValue("end",  end.atOffset(ZoneOffset.ofHours(0)));
 		
 		jdbc.update(MARK_INVOICE, parameters);
 	}
@@ -86,7 +81,7 @@ public class FinancialServiceDbImpl implements FinancialService {
 	}
 	
 	private void insertInvoices(List<Invoice> invoices, Long masterId) {
-		final String CREATE_INVOICES = "INSERT INTO Invoices (id, master_id, calling, start, end, sum, count) "
+		final String CREATE_INVOICES = "INSERT INTO Invoices (id, master_id, calling, start, \"end\", sum, count) "
 				+ "VALUES (:id, :master_id, :calling, :start, :end, :sum, :count)";
 		
 		SqlParameterSource[] parametersBatch = invoices.stream().map(invoice -> {
