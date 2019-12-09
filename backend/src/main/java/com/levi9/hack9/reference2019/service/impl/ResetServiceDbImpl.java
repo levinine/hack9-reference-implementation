@@ -4,7 +4,7 @@
 package com.levi9.hack9.reference2019.service.impl;
 
 import java.io.IOException;
-import java.time.ZoneOffset;
+import java.sql.Timestamp;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -62,7 +62,7 @@ public class ResetServiceDbImpl implements ResetService {
 					source.addValue("initial", price.initial);
 					source.addValue("prefix", price.prefix);
 					source.addValue("price", price.price);
-					source.addValue("start", price.start.atOffset(ZoneOffset.ofHours(0)));
+					source.addValue("start", Timestamp.from(price.start)); // .atOffset(ZoneOffset.ofHours(0))
 					return source;
 				})
 				.collect(Collectors.toList()).toArray(new SqlParameterSource[0]);

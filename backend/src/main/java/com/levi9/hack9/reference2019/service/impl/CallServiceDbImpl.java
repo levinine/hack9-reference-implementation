@@ -5,6 +5,7 @@ package com.levi9.hack9.reference2019.service.impl;
 
 import java.math.BigDecimal;
 import java.sql.ResultSet;
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
@@ -81,7 +82,7 @@ public class CallServiceDbImpl implements CallService {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("caller", call.getCalling());
 		parameters.addValue("called", call.getCalled());
-		parameters.addValue("started", call.getStart());
+		parameters.addValue("started", Timestamp.from(call.getStart().toInstant()));
 		parameters.addValue("duration", call.getDuration());
 		parameters.addValue("cost", calculateCost(price, call.getDuration()));
 		parameters.addValue("price_id", getPriceId(price));
@@ -112,8 +113,8 @@ public class CallServiceDbImpl implements CallService {
 				+ "WHERE c.caller = :caller AND started >= :from AND started <= :to";
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("caller", caller);
-		parameters.addValue("from", from.atOffset(ZoneOffset.ofHours(0)));
-		parameters.addValue("to", to.atOffset(ZoneOffset.ofHours(0)));
+		parameters.addValue("from", Timestamp.from(from));
+		parameters.addValue("to", Timestamp.from(to));
 		final List<CallCost> calls = jdbcTemplate.query(GET_LISTING, parameters, (ResultSet rs, int rowNum) -> {
 			final CallCost callCost = new CallCost()
 					.calling(caller)

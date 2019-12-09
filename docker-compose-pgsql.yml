@@ -1,5 +1,5 @@
 #
-# Tandem launcher
+# RI (using PgSQL) + Callback + PgSQL 12.0
 #
 version: "3.7"
 
@@ -16,6 +16,7 @@ services:
       - "8080:8080"
     depends_on:
       - pgsql
+    restart: on-failure
      
   # 
   # Callback handler for invoices

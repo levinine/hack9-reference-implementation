@@ -3,6 +3,7 @@
  */
 package com.levi9.hack9.reference2019.service.impl;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.ZoneOffset;
 import java.util.List;
@@ -57,8 +58,8 @@ public class FinancialServiceDbImpl implements FinancialService {
 		MapSqlParameterSource parameters = new MapSqlParameterSource();
 		parameters.addValue("id", masterId.toString());
 		parameters.addValue("master_id", masterId);
-		parameters.addValue("start", start.atOffset(ZoneOffset.ofHours(0)));
-		parameters.addValue("end",  end.atOffset(ZoneOffset.ofHours(0)));
+		parameters.addValue("start", Timestamp.from(start));
+		parameters.addValue("end",  Timestamp.from(end));
 		
 		jdbc.update(MARK_INVOICE, parameters);
 	}
@@ -81,7 +82,7 @@ public class FinancialServiceDbImpl implements FinancialService {
 	}
 	
 	private void insertInvoices(List<Invoice> invoices, Long masterId) {
-		final String CREATE_INVOICES = "INSERT INTO Invoices (id, master_id, calling, start, \"end\", sum, count) "
+		final String CREATE_INVOICES = "INSERT INTO Invoices (id, master_id, calling, start_period, end_period, sum, count) "
 				+ "VALUES (:id, :master_id, :calling, :start, :end, :sum, :count)";
 		
 		SqlParameterSource[] parametersBatch = invoices.stream().map(invoice -> {
@@ -89,8 +90,8 @@ public class FinancialServiceDbImpl implements FinancialService {
 			parameters.addValue("id", invoice.getId());
 			parameters.addValue("master_id", masterId);
 			parameters.addValue("calling", invoice.getCalling());
-			parameters.addValue("start", invoice.getStart());
-			parameters.addValue("end", invoice.getEnd());
+			parameters.addValue("start", Timestamp.from(invoice.getStart().toInstant()));
+			parameters.addValue("end", Timestamp.from(invoice.getEnd().toInstant()));
 			parameters.addValue("sum", invoice.getSum());
 			parameters.addValue("count", invoice.getCount());
 			return parameters;
@@ -113,9 +114,9 @@ public class FinancialServiceDbImpl implements FinancialService {
 					Optional.of(new Invoice()
 							.calling(rs.getString("calling"))
 							.count(rs.getInt("count"))
-							.end(TimeUtil.convert(rs.getTimestamp("end")))
+							.end(TimeUtil.convert(rs.getTimestamp("end_period")))
 							.id(rs.getString("id"))
-							.start(TimeUtil.convert(rs.getTimestamp("start")))
+							.start(TimeUtil.convert(rs.getTimestamp("start_period")))
 							.sum(rs.getFloat("sum")))
 					: Optional.empty();
 		});
