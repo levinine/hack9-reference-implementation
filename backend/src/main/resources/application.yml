@@ -47,3 +47,14 @@ spring:
     console:
       enabled: true
       path: "/h2-console"
+      
+---
+
+spring:
+  profiles: db-mysql
+  datasource:
+    url: "jdbc:mysql://localhost/hack9db"
+    username: hack9
+    password: haxx0r
+    initialization-mode: always
+    platform: mysql

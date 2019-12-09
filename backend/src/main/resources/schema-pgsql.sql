@@ -25,8 +25,8 @@ CREATE TABLE IF NOT EXISTS Invoices (
     "id" VARCHAR(100),
     "master_id" BIGINT,
     "calling" VARCHAR(30),
-    "start" TIMESTAMP WITH TIME ZONE,
-    "end" TIMESTAMP WITH TIME ZONE,
+    "start_period" TIMESTAMP WITH TIME ZONE,
+    "end_period" TIMESTAMP WITH TIME ZONE,
     "sum" DOUBLE PRECISION,
     "count" INT
 );

@@ -1,0 +1,24 @@
+#
+# RI (using H2 DB) + Callback
+#
+version: "3.7"
+
+services:
+  #
+  # Hack9 Reference Implementation
+  #
+  hack9-ri:
+    image: "levi9/hack9-ri:latest"
+    command:
+      - "--spring.profiles.active=db-h2"
+    ports:
+      - "8080:8080"
+     
+  # 
+  # Callback handler for invoices
+  #
+  hack9-callback:
+    image: "levi9/hack9-callback:latest"
+    depends_on:
+      - hack9-ri   
+  
