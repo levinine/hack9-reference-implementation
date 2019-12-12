@@ -32,7 +32,7 @@ paths:
           schema:
             type: string
             format: telephone
-          description: "Telephone number to call, for which the call price should be calculated."
+          description: "Telephone number to call, for which the call price should be returned."
           example: "38121123456"
         - name: time
           in: query

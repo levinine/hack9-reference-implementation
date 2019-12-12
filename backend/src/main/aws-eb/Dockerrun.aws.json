@@ -1,0 +1,14 @@
+{
+  "AWSEBDockerrunVersion": "1",
+  "Image": {
+    "Name": "745008152238.dkr.ecr.eu-west-1.amazonaws.com/levi9/hack9-ri:latest",
+    "Update": "true"
+  },
+  "Ports": [
+    {
+      "ContainerPort": "8080"
+    }
+  ],
+  "Logging": "/var/log/hack9",
+  "Command": "--spring.profiles.active=db-h2"
+}
