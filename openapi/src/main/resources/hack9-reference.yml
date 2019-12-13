@@ -247,7 +247,7 @@ components:
         prefix:
           type: string
           description: "Telephone number prefix this price is for."
-          example: "381 21"
+          example: "38121"
         price:
           type: number
           format: float
@@ -340,7 +340,7 @@ components:
           type: number
           format: float
           description: "Cost of the call that was made."
-          example: "2.367"
+          example: "2.37"
       required:
         - cost
         - calling
