@@ -43,7 +43,7 @@ paths:
           example: "2019-04-03T12:34:56.00Z"
       responses:
         200:
-          description: "Price of a call, per second"
+          description: "Price of a call, per minute"
           content:
             application/json:
               schema:
