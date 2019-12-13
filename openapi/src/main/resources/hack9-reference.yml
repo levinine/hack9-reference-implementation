@@ -252,7 +252,7 @@ components:
           type: number
           format: float
           description: "Price of a phone call, per minute."
-          example: "1.2"
+          example: 1.2
         from:
           type: string
           format: date-time
@@ -262,12 +262,12 @@ components:
           type: number
           format: int32
           description: "Initial number of seconds for the esablishing the call."
-          example: "10"
+          example: 10
         increment:
           type: number
           format: int32
           description: "Number of seconds for the call duration rounding."
-          example: "5"
+          example: 5
       required:
         - prefix
         - price
@@ -296,7 +296,7 @@ components:
           type: integer
           format: int32
           description: "Call duration, in seconds"
-          example: "450"
+          example: 450
       required:
         - calling
         - caller
@@ -325,22 +325,22 @@ components:
           type: integer
           format: int32
           description: "Call duration, in seconds"
-          example: "350"
+          example: 350
         rounded:
           type: integer
           format: int32
           description: "Call duration, in seconds, with initial, rounded to increment."
-          example: "355"
+          example: 355
         price:
           type: number
           format: float
           description: "Price of the call per minute, used to calculate the cost."
-          example: "0.4"
+          example: 0.4
         cost:
           type: number
           format: float
           description: "Cost of the call that was made."
-          example: "2.37"
+          example: 2.37
       required:
         - cost
         - calling
@@ -413,12 +413,12 @@ components:
           type: number
           format: float
           description: "Amount to be payed for the invoice"
-          example: "1341.33"
+          example: 1341.33
         count:
           type: integer
           format: int32
           description: "Number of calls made during the invoicing period."
-          example: "2319"
+          example: 2319
       required:
         - id
         - calling
@@ -444,7 +444,7 @@ components:
           type: number
           format: float
           description: "The sum of cost of un-invoiced calls for the gien number."
-          example: "34.23"
+          example: 34.23
       required:
         - calling
         - invoices
@@ -462,7 +462,7 @@ components:
           type: number
           format: float
           description: "Sum on the invoice"
-          example: "231.22"
+          example: 231.22
       required:
         - id
         - sum
