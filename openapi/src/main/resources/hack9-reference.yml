@@ -98,7 +98,7 @@ paths:
   /financial/invoice:
     post:
       summary: "Generate invoice"
-      description: "Initiate invoice generation for all calls initiated within the given period. For each calling number and given period, one invoice needs to be generated. Each invoice has a unique ID. When invoices generation is finished, given callback URL should be called."
+      description: "Initiate invoice generation for all calls initiated within the given period. For each calling number and given period, one invoice needs to be generated. Each invoice has a unique ID. When invoices generation is finished, given callback URL should be called. It will signal the client (judge) that the invoice generation is done."
       operationId: createInvoice
       tags:
         - financial
