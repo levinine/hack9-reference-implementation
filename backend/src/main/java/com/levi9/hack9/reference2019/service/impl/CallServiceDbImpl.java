@@ -67,7 +67,7 @@ public class CallServiceDbImpl implements CallService {
 		return new CallCost()
 				.called(call.getCalled())
 				.calling(call.getCalling())
-				.cost(calculateCost(price, call.getDuration()))
+				.cost(calculateCost(price, Integer.parseInt(call.getDuration())))
 				.duration(call.getDuration())
 				.price(price.getPrice())
 				.rounded(price.getIncrement().intValue())
@@ -84,7 +84,7 @@ public class CallServiceDbImpl implements CallService {
 		parameters.addValue("called", call.getCalled());
 		parameters.addValue("started", Timestamp.from(call.getStart().toInstant()));
 		parameters.addValue("duration", call.getDuration());
-		parameters.addValue("cost", calculateCost(price, call.getDuration()));
+		parameters.addValue("cost", calculateCost(price, Integer.parseInt(call.getDuration())));
 		parameters.addValue("price_id", getPriceId(price));
 		jdbcTemplate.update(REGISTER_CALL, parameters);
 		
@@ -120,7 +120,7 @@ public class CallServiceDbImpl implements CallService {
 					.calling(caller)
 					.called(rs.getString("called"))
 					.start(TimeUtil.convert(rs.getTimestamp("started")))
-					.duration(rs.getInt("duration"))
+					.duration(Integer.toString(rs.getInt("duration")))
 					.cost(rs.getFloat("cost"))
 					.price(rs.getFloat("price"));
 			return callCost;
