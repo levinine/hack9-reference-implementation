@@ -293,13 +293,12 @@ components:
           description: "Start time of the call"
           example: "2019-05-23T21:03:33.30Z"
         duration:
-          type: integer
-          format: int32
+          type: string
           description: "Call duration, in seconds"
-          example: 450
+          example: "450"
       required:
         - calling
-        - caller
+        - called
         - start
         - duration
         
@@ -322,10 +321,9 @@ components:
           description: "Start time of the call"
           example: "2019-05-23T21:03:33.30Z"
         duration:
-          type: integer
-          format: int32
+          type: string
           description: "Call duration, in seconds"
-          example: 350
+          example: "350"
         rounded:
           type: integer
           format: int32
